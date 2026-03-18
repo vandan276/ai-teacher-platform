@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Login - AI Teacher Platform{% endblock %}
+{% block auth_content %}
+<div class="glass-card shadow-2xl p-10 transform transition-all hover:scale-[1.01]">
+    <form class="space-y-6" action="{{ url_for('auth.login') }}" method="POST">
+        <div>
+            <label for="email" class="block text-sm font-semibold text-slate-700 mb-2">Email address</label>
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+                <input id="email" name="email" type="email" required 
+                    class="block w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400" 
+                    placeholder="Email">
+            </div>
+        </div>
+
+        <div>
+            <label for="password" class="block text-sm font-semibold text-slate-700 mb-2">Password</label>
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <input id="password" name="password" type="password" required 
+                    class="block w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400"
+                    placeholder="Password">
+            </div>
+        </div>
+
+        <div class="pt-2">
+            <button type="submit" class="w-full btn-premium">
+                Sign in
+            </button>
+        </div>
+
+        <div class="relative py-4">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-slate-100"></div>
+            </div>
+            <div class="relative flex justify-center text-xs uppercase">
+                <span class="bg-white px-2 text-slate-400 font-semibold tracking-wider">Or continue with</span>
+            </div>
+        </div>
+
+        <div>
+            <a href="{{ url_for('graph_auth.login') }}" 
+               class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
+                <svg class="w-5 h-5" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#f3f3f3" d="M0 0h23v23H0z"/>
+                    <path fill="#f35325" d="M1 1h10v10H1z"/>
+                    <path fill="#81bc06" d="M12 1h10v10H12z"/>
+                    <path fill="#05a6f0" d="M1 12h10v10H1z"/>
+                    <path fill="#ffba08" d="M12 12h10v10H12z"/>
+                </svg>
+                Sign in with Microsoft
+            </a>
+        </div>
+    </form>
+    
+    <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+        <p class="text-sm text-slate-600">New participant? 
+            <a href="{{ url_for('auth.register') }}" class="font-bold text-indigo-600 hover:text-indigo-700 transition-colors">Register here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

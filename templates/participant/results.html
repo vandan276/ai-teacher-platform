@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Result{% endblock %}
+{% block header_title %}Assessment Outcome{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-12 text-center">
+    <div class="premium-card bg-white p-12 shadow-2xl transition-none hover:transform-none border-slate-100">
+        {% if passed %}
+            <div class="relative inline-block mb-10">
+                <div class="absolute inset-0 bg-green-500 blur-2xl opacity-20 animate-pulse"></div>
+                <div class="relative w-24 h-24 bg-green-50 text-green-500 rounded-3xl flex items-center justify-center text-5xl shadow-inner">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            </div>
+            <h1 class="text-4xl font-black text-slate-800 tracking-tight mb-4">Mastery Achieved!</h1>
+            <p class="text-lg text-slate-500 font-medium mb-10">You have successfully demonstrated your proficiency in this module.</p>
+        {% else %}
+            <div class="relative inline-block mb-10">
+                <div class="absolute inset-0 bg-red-500 blur-2xl opacity-20"></div>
+                <div class="relative w-24 h-24 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center text-5xl shadow-inner">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+            </div>
+            <h1 class="text-4xl font-black text-slate-800 tracking-tight mb-4">Keep Improving!</h1>
+            <p class="text-lg text-slate-500 font-medium mb-10">You're getting closer. Review the materials and try again to reach the 80% mark.</p>
+        {% endif %}
+
+        <div class="relative group cursor-default inline-block mb-12">
+            <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+            <div class="relative bg-slate-50 px-10 py-6 rounded-2xl border border-white">
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Knowledge Score</p>
+                <div class="flex items-end justify-center">
+                    <span class="text-6xl font-black text-indigo-600">{{ score }}</span>
+                    <span class="text-2xl text-slate-300 font-bold ml-2 mb-2">/ {{ total }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col space-y-4 max-w-sm mx-auto">
+            {% if passed %}
+                <a href="{{ url_for('participant.dashboard') }}" class="btn-premium py-4 text-center text-lg">
+                    Return to Dashboard
+                </a>
+            {% else %}
+                <a href="{{ url_for('participant.assessment', module_id=module_id) }}" class="btn-premium py-4 text-center text-lg">
+                    Retake Assessment
+                </a>
+                <a href="{{ url_for('participant.module_detail', module_id=module_id) }}" 
+                    class="py-3 text-indigo-600 font-bold hover:text-indigo-700 transition">
+                    Review Study Material
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

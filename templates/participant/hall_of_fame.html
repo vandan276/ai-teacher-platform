@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Hall of Fame - AI Teacher Platform{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-12">
+    <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <h1 class="text-4xl font-extrabold text-slate-800">Hall of Fame</h1>
+            <p class="text-slate-500 mt-2">Recognizing top-performing educators in the Microsoft Elevate program.</p>
+        </div>
+        <div class="flex items-center gap-3 px-6 py-3 bg-amber-50 rounded-2xl border border-amber-100">
+            <i class="fa-solid fa-medal text-amber-500 text-xl"></i>
+            <span class="text-sm font-bold text-amber-800">Top 10 Global Ranking</span>
+        </div>
+    </div>
+
+    <!-- Leaderboard Table -->
+    <div class="glass-card overflow-hidden shadow-2xl border-none">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-slate-50/50">
+                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100">Rank</th>
+                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100">Teacher</th>
+                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 hidden md:table-cell">District</th>
+                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 text-center">Modules</th>
+                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 text-center">Avg Score</th>
+                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 text-right">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                {% for player in leaderboard %}
+                <tr class="hover:bg-slate-50/50 transition-colors group">
+                    <td class="px-8 py-6">
+                        <div class="w-10 h-10 flex items-center justify-center font-bold text-lg
+                            {% if loop.index == 1 %}bg-amber-400 text-white rounded-xl shadow-lg shadow-amber-200
+                            {% elif loop.index == 2 %}bg-slate-300 text-white rounded-xl shadow-lg shadow-slate-200
+                            {% elif loop.index == 3 %}bg-orange-300 text-white rounded-xl shadow-lg shadow-orange-200
+                            {% else %}text-slate-400{% endif %}">
+                            {{ loop.index }}
+                        </div>
+                    </td>
+                    <td class="px-8 py-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">
+                                {{ player.name[0] }}
+                            </div>
+                            <div>
+                                <div class="font-bold text-slate-800">{{ player.name }}</div>
+                                <div class="text-[10px] uppercase font-bold text-slate-400 tracking-widest md:hidden">{{ player.district_name }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-8 py-6 text-slate-600 font-medium hidden md:table-cell">
+                        {{ player.district_name }}
+                    </td>
+                    <td class="px-8 py-6 text-center">
+                        <span class="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full">
+                            {{ player.completed_count or 0 }} Completed
+                        </span>
+                    </td>
+                    <td class="px-8 py-6 text-center">
+                        <div class="text-slate-800 font-bold">{{ player.avg_score|round(1) if player.avg_score else '0.0' }}</div>
+                        <div class="text-[10px] text-slate-400 uppercase font-bold">Points</div>
+                    </td>
+                    <td class="px-8 py-6 text-right">
+                        {% if player.has_trophy %}
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded-full border border-amber-200">
+                            <i class="fa-solid fa-award"></i>
+                            certified
+                        </div>
+                        {% else %}
+                        <div class="text-[10px] text-slate-300 font-bold uppercase tracking-wider italic">In Progress</div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Info Footer -->
+    <div class="mt-12 text-center text-slate-400 text-sm">
+        <p>Ranking is calculated based on Certified status, total modules completed, and average assessment scores.</p>
+    </div>
+</div>
+{% endblock %}

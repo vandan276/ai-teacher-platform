@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Calendar{% endblock %}
+{% block header_title %}Events & Calendar{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Upcoming Events -->
+    <div>
+        <h2 class="text-xl font-bold text-slate-800 mb-4"><i class="fa-solid fa-calendar-days text-indigo-600 mr-2"></i>Upcoming Events</h2>
+        {% if upcoming_events %}
+        <div class="space-y-4">
+            {% for event in upcoming_events %}
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex items-start gap-6 hover:shadow-md transition-shadow">
+                <div class="w-16 h-16 rounded-2xl flex flex-col items-center justify-center shrink-0 text-white
+                    {% if event.event_type == 'meeting' %}bg-blue-600{% elif event.event_type == 'training' %}bg-violet-600{% elif event.event_type == 'deadline' %}bg-red-600{% else %}bg-emerald-600{% endif %}">
+                    <span class="text-xs font-bold uppercase">{{ event.event_date.strftime('%b') if event.event_date else '' }}</span>
+                    <span class="text-xl font-extrabold leading-none">{{ event.event_date.strftime('%d') if event.event_date else '' }}</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase
+                            {% if event.event_type == 'meeting' %}bg-blue-50 text-blue-600{% elif event.event_type == 'training' %}bg-violet-50 text-violet-600{% elif event.event_type == 'deadline' %}bg-red-50 text-red-600{% else %}bg-emerald-50 text-emerald-600{% endif %}">
+                            {{ event.event_type }}
+                        </span>
+                        {% if event.event_time %}
+                        <span class="text-xs text-slate-400"><i class="fa-regular fa-clock mr-1"></i>{{ event.event_time }}</span>
+                        {% endif %}
+                        <span class="text-xs text-slate-400">{{ event.event_date.strftime('%A, %B %d, %Y') if event.event_date else '' }}</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">{{ event.title }}</h3>
+                    {% if event.description %}
+                    <p class="text-sm text-slate-500 mt-1">{{ event.description }}</p>
+                    {% endif %}
+                    {% if event.location %}
+                    <p class="text-xs text-slate-400 mt-2"><i class="fa-solid fa-location-dot mr-1 text-indigo-400"></i>{{ event.location }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16 bg-white rounded-2xl border border-slate-100">
+            <i class="fa-solid fa-calendar-check text-4xl text-emerald-500 mb-4 opacity-30"></i>
+            <p class="text-slate-400 font-medium">No upcoming events. Check back later!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Past Events -->
+    {% if past_events %}
+    <div>
+        <h2 class="text-xl font-bold text-slate-800 mb-4"><i class="fa-solid fa-clock-rotate-left text-slate-400 mr-2"></i>Recent Past Events</h2>
+        <div class="space-y-3">
+            {% for event in past_events %}
+            <div class="bg-white rounded-xl border border-slate-100 p-4 flex items-center gap-4 opacity-60">
+                <div class="w-12 h-12 rounded-xl flex flex-col items-center justify-center shrink-0 bg-slate-100 text-slate-500">
+                    <span class="text-[10px] font-bold uppercase">{{ event.event_date.strftime('%b') if event.event_date else '' }}</span>
+                    <span class="text-lg font-extrabold leading-none">{{ event.event_date.strftime('%d') if event.event_date else '' }}</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-bold text-slate-600">{{ event.title }}</h3>
+                    <span class="text-xs text-slate-400">{{ event.event_type }} · {{ event.event_date.strftime('%b %d, %Y') if event.event_date else '' }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

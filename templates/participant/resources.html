@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Resources Library - AI Teacher Platform{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-12">
+    <div class="mb-12">
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Resources & Library</h1>
+        <p class="text-slate-500 mt-2">Download PDF materials, classroom guides, and AI toolkits.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for resource in resources %}
+        <div class="glass-card group overflow-hidden border-none shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="h-3 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+            <div class="p-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                        {% if resource.file_url.endswith('.pdf') %}
+                            <i class="fa-solid fa-file-pdf text-xl text-red-500"></i>
+                        {% elif resource.file_url.endswith('.pptx') or resource.file_url.endswith('.ppt') %}
+                            <i class="fa-solid fa-file-powerpoint text-xl text-orange-500"></i>
+                        {% else %}
+                            <i class="fa-solid fa-file-arrow-down text-xl"></i>
+                        {% endif %}
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ resource.category }}</span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 leading-tight">{{ resource.title }}</h3>
+                <p class="text-sm text-slate-500 mt-3 line-clamp-3 leading-relaxed">{{ resource.description }}</p>
+                
+                <div class="mt-8 flex items-center gap-4">
+                    {% set preview_url = resource.file_url %}
+                    {% set is_office = resource.file_url.endswith('.pptx') or resource.file_url.endswith('.ppt') or resource.file_url.endswith('.docx') %}
+                    
+                    {# Use Office Viewer only if not on localhost/127.0.0.1 #}
+                    {% if is_office and 'localhost' not in request.host and '127.0.0.1' not in request.host %}
+                        {% set preview_url = "https://view.officeapps.live.com/op/view.aspx?src=" + request.host_url|trim('/') + resource.file_url %}
+                    {% endif %}
+                    
+                    <a href="{{ preview_url }}" target="_blank" class="flex-1 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm text-center hover:bg-indigo-700 shadow-md shadow-indigo-100 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-eye text-xs"></i>
+                        Preview
+                    </a>
+                    <a href="{{ resource.file_url }}" download class="p-3 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-all" title="Download">
+                        <i class="fa-solid fa-download"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Empty State -->
+    {% if not resources %}
+    <div class="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-slate-100">
+        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-folder-open text-3xl text-slate-300"></i>
+        </div>
+        <h3 class="text-xl font-bold text-slate-600">No resources available yet</h3>
+        <p class="text-slate-400 mt-2">Check back soon for new learning materials.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

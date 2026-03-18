@@ -1,0 +1,10 @@
+flask
+flask-mysqldb
+werkzeug
+mysql-connector-python
+python-dotenv
+Pillow
+cloudinary
+msal
+requests
+gunicorn

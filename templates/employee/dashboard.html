@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Monitoring{% endblock %}
+{% block header_title %}District Progress Monitoring{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div class="premium-card bg-white p-8 border-slate-100">
+        <form action="{{ url_for('employee.dashboard') }}" method="GET" class="flex flex-col md:flex-row items-end gap-6">
+            <div class="flex-1 w-full">
+                <label class="block text-sm font-bold text-slate-700 mb-3">Monitoring Scope</label>
+                <div class="relative">
+                    <select name="district_id" 
+                        class="block w-full pl-5 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all appearance-none font-semibold text-slate-700">
+                        <option value="">Select a District to Monitor</option>
+                        {% for d in districts %}
+                            <option value="{{ d.id }}" {% if selected_district == d.id|string %}selected{% endif %}>{{ d.district_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-chevron-down text-sm"></i>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn-premium px-10 flex items-center shadow-indigo-100">
+                <i class="fa-solid fa-magnifying-glass mr-2 text-xs"></i> Initialize Filter
+            </button>
+        </form>
+    </div>
+
+    {% if selected_district %}
+        <div class="bg-white shadow-sm border border-slate-100 rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Teacher Detail</th>
+                            <th class="px-8 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-widest">Progress</th>
+                            <th class="px-8 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-widest">Trophy Status</th>
+                            <th class="px-8 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-widest">Account Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-slate-100">
+                        {% for teacher in teachers %}
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-8 py-6 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold mr-4 group-hover:bg-indigo-600 transition-colors">
+                                        {{ teacher.name[0] }}
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold text-slate-900">{{ teacher.name }}</div>
+                                        <div class="text-xs text-slate-400 font-medium">{{ teacher.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-6 whitespace-nowrap text-center">
+                                <span class="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-black ring-1 ring-inset ring-indigo-200">
+                                    {{ teacher.completed_modules }} Modules
+                                </span>
+                            </td>
+                            <td class="px-8 py-6 whitespace-nowrap text-center">
+                                {% if teacher.trophy %}
+                                    <span class="text-amber-500 flex items-center justify-center space-x-2">
+                                        <i class="fa-solid fa-award text-lg"></i>
+                                        <span class="text-xs font-bold tracking-tight">Earned</span>
+                                    </span>
+                                {% else %}
+                                    <span class="text-slate-300 flex items-center justify-center">
+                                        <i class="fa-solid fa-circle-minus text-xs"></i>
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-8 py-6 whitespace-nowrap text-right">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest {% if teacher.is_approved %}bg-green-50 text-green-700 border border-green-100{% else %}bg-amber-50 text-amber-700 border border-amber-100{% endif %}">
+                                    {{ 'Active' if teacher.is_approved else 'Pending Approval' }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="px-8 py-20 text-center">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-200 mb-4">
+                                        <i class="fa-solid fa-users-slash text-2xl"></i>
+                                    </div>
+                                    <p class="text-slate-400 font-bold">No teachers registered in this district yet.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="bg-white py-24 px-8 text-center rounded-[2rem] border border-dashed border-slate-200">
+            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-indigo-200 mx-auto mb-6">
+                <i class="fa-solid fa-map-location-dot text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-black text-slate-800 tracking-tight">System Ready for Monitoring</h3>
+            <p class="text-slate-500 mt-2 max-w-sm mx-auto">Please select a strategic district from the controls above to initialize live progress monitoring.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

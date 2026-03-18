@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block title %}User Management{% endblock %}
+{% block header_title %}User Management{% endblock %}
+
+{% block content %}
+<div x-data="{ 
+    deleteModalOpen: false, 
+    userToDelete: { id: null, name: '' },
+    openDeleteModal(id, name) {
+        this.userToDelete = { id, name };
+        this.deleteModalOpen = true;
+    }
+}">
+    <div class="space-y-6">
+        <div class="flex justify-between items-center">
+            <h2 class="text-xl font-bold text-slate-800">Platform Users</h2>
+            <button onclick="document.getElementById('addEmployeeModal').classList.remove('hidden')" 
+                class="inline-flex items-center px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition shadow-sm hover:shadow-md">
+                <i class="fa-solid fa-plus mr-2"></i> Add New Employee
+            </button>
+        </div>
+
+        <!-- Add Employee Modal (Existing) -->
+        <div id="addEmployeeModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+            <!-- Modal Content (unchanged) -->
+            <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-md w-full mx-4 overflow-hidden">
+                <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-900">Add New Employee</h3>
+                    <button onclick="document.getElementById('addEmployeeModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <form action="{{ url_for('admin.add_employee') }}" method="POST" class="p-8 space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Full Name</label>
+                        <input type="text" name="name" required placeholder="John Doe" 
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email Address</label>
+                        <input type="email" name="email" required placeholder="john@example.com" 
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Initial Password</label>
+                        <input type="password" name="password" required placeholder="••••••••" 
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Assign District (Optional)</label>
+                        <select name="district_id" 
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium text-slate-600">
+                            <option value="">Central / No District</option>
+                            {% for district in districts %}
+                            <option value="{{ district.id }}">{{ district.district_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="pt-4 flex space-x-3">
+                        <button type="button" onclick="document.getElementById('addEmployeeModal').classList.add('hidden')" 
+                            class="flex-1 px-4 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition">
+                            Cancel
+                        </button>
+                        <button type="submit" 
+                            class="flex-1 px-4 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition">
+                            Create Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="bg-white shadow-sm border border-slate-100 rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">User Details</th>
+                            <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Role</th>
+                            <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">District</th>
+                            <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Status</th>
+                            <th class="px-8 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-widest">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-slate-100">
+                        {% for user in users %}
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-8 py-5 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-bold mr-4">
+                                        {{ user.name[0] }}
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold text-slate-900">{{ user.name }}</div>
+                                        <div class="text-xs text-slate-500">{{ user.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5 whitespace-nowrap">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {% if user.role == 'Employee' %}bg-violet-50 text-violet-700 border border-violet-100{% else %}bg-blue-50 text-blue-700 border border-blue-100{% endif %}">
+                                    {{ user.role }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-5 whitespace-nowrap">
+                                <div class="text-sm font-medium text-slate-600">{{ user.district_name or 'Central Admin' }}</div>
+                            </td>
+                            <td class="px-8 py-5 whitespace-nowrap">
+                                {% if user.is_approved %}
+                                    <span class="inline-flex items-center text-green-600 space-x-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                        <span class="text-sm font-bold">Active</span>
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center text-amber-600 space-x-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                                        <span class="text-sm font-bold">Pending Review</span>
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-8 py-5 whitespace-nowrap text-right">
+                                <div class="relative inline-block text-left" x-data="{ open: false }">
+                                    <button @click="open = !open" @click.away="open = false"
+                                        class="p-2 text-slate-400 hover:text-slate-600 transition focus:outline-none">
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </button>
+                                    
+                                    <div x-show="open" 
+                                        x-transition:enter="transition ease-out duration-100"
+                                        x-transition:enter-start="transform opacity-0 scale-95"
+                                        x-transition:enter-end="transform opacity-100 scale-100"
+                                        x-transition:leave="transition ease-in duration-75"
+                                        x-transition:leave-start="transform opacity-100 scale-100"
+                                        x-transition:leave-end="transform opacity-0 scale-95"
+                                        class="absolute right-0 mt-2 w-48 rounded-xl shadow-xl bg-white border border-slate-100 z-20 overflow-hidden divide-y divide-slate-100" 
+                                        x-cloak>
+                                        <div class="py-1">
+                                            {% if not user.is_approved and user.role == 'Participant' %}
+                                            <a href="{{ url_for('admin.approve_user', user_id=user.id) }}" class="flex items-center px-4 py-2.5 text-sm font-semibold text-green-600 hover:bg-green-50 transition">
+                                                <i class="fa-solid fa-check-circle mr-3"></i> Approve
+                                            </a>
+                                            {% endif %}
+                                            <a href="#" @click.prevent="alert('Edit functionality coming soon!')" class="flex items-center px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                                                <i class="fa-solid fa-pen-to-square mr-3 text-slate-400"></i> Edit Profile
+                                            </a>
+                                        </div>
+                                        <div class="py-1">
+                                            <button @click="openDeleteModal({{ user.id }}, '{{ user.name }}')" 
+                                                class="w-full flex items-center px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition text-left">
+                                                <i class="fa-solid fa-trash-can mr-3 opacity-70"></i> Delete User
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Delete Confirmation Modal -->
+    <template x-teleport="body">
+        <div x-show="deleteModalOpen" 
+            class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            x-cloak>
+            
+            <div @click.away="deleteModalOpen = false" 
+                class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden transform transition-all border border-slate-100"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                
+                <div class="p-8 text-center">
+                    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 mb-6">
+                        <i class="fa-solid fa-triangle-exclamation text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900">Confirm Deletion</h3>
+                    <p class="mt-3 text-sm text-slate-500 leading-relaxed">
+                        Are you sure you want to delete <span class="font-bold text-slate-900" x-text="userToDelete.name"></span>? This action is permanent and cannot be undone.
+                    </p>
+                </div>
+                
+                <div class="px-8 py-6 bg-slate-50 flex flex-col sm:flex-row-reverse gap-3">
+                    <form :action="'{{ url_for('admin.users') }}/delete/' + userToDelete.id" method="POST" class="flex-1">
+                        <button type="submit" 
+                            class="w-full inline-flex justify-center rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 transition">
+                            Delete Account
+                        </button>
+                    </form>
+                    <button type="button" @click="deleteModalOpen = false"
+                        class="flex-1 inline-flex justify-center rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-700 ring-1 ring-inset ring-slate-200 hover:bg-slate-50 transition">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Welcome - Microsoft Elevate{% endblock %}
+{% block header_title %}Welcome, {{ user_name }}!{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-8">
+
+    <!-- Hero Welcome Card -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 rounded-3xl shadow-2xl shadow-indigo-500/20 p-10 text-white">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+        <div class="relative z-10">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-widest">Microsoft Elevate Program</span>
+            </div>
+            <h1 class="text-4xl font-extrabold tracking-tight mb-3">Welcome to the AI Teacher<br/>Training Platform 🚀</h1>
+            <p class="text-lg text-indigo-100 max-w-2xl leading-relaxed">
+                You're part of an exclusive upskilling initiative designed to empower educators with AI competencies. 
+                Master cutting-edge Microsoft AI tools and earn your verified certificate.
+            </p>
+        </div>
+    </div>
+
+    <!-- Progress Snapshot -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-center">
+            <div class="w-14 h-14 mx-auto mb-4 bg-indigo-50 rounded-2xl flex items-center justify-center">
+                <i class="fa-solid fa-book-open text-2xl text-indigo-600"></i>
+            </div>
+            <p class="text-3xl font-extrabold text-slate-800">{{ total_modules }}</p>
+            <p class="text-sm text-slate-500 font-medium mt-1">Training Modules</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-center">
+            <div class="w-14 h-14 mx-auto mb-4 bg-green-50 rounded-2xl flex items-center justify-center">
+                <i class="fa-solid fa-circle-check text-2xl text-green-600"></i>
+            </div>
+            <p class="text-3xl font-extrabold text-slate-800">{{ completed_modules }}</p>
+            <p class="text-sm text-slate-500 font-medium mt-1">Completed</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-center">
+            <div class="w-14 h-14 mx-auto mb-4 bg-amber-50 rounded-2xl flex items-center justify-center">
+                <i class="fa-solid fa-trophy text-2xl text-amber-500"></i>
+            </div>
+            <p class="text-3xl font-extrabold text-slate-800">{{ total_modules - completed_modules }}</p>
+            <p class="text-sm text-slate-500 font-medium mt-1">Remaining</p>
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="p-8 border-b border-slate-100">
+            <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-route text-indigo-600 mr-2"></i> How It Works</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+            <div class="p-8 text-center">
+                <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-indigo-100 text-indigo-600 font-extrabold text-lg flex items-center justify-center">1</div>
+                <h3 class="font-bold text-slate-800 mb-2">Study Modules</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">Access the curated Microsoft AI training modules from your Dashboard.</p>
+            </div>
+            <div class="p-8 text-center">
+                <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-violet-100 text-violet-600 font-extrabold text-lg flex items-center justify-center">2</div>
+                <h3 class="font-bold text-slate-800 mb-2">Take Assessments</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">After each module, complete the assessment with an 80% pass rate.</p>
+            </div>
+            <div class="p-8 text-center">
+                <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-emerald-100 text-emerald-600 font-extrabold text-lg flex items-center justify-center">3</div>
+                <h3 class="font-bold text-slate-800 mb-2">Track Progress</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">Use Roadmap and Skills Analytics to monitor your journey.</p>
+            </div>
+            <div class="p-8 text-center">
+                <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-amber-100 text-amber-600 font-extrabold text-lg flex items-center justify-center">4</div>
+                <h3 class="font-bold text-slate-800 mb-2">Earn Certificate</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">Complete all modules to unlock your verified certificate & trophy.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-map text-xl text-blue-600"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800">Learning Roadmap</h3>
+            </div>
+            <p class="text-sm text-slate-500 leading-relaxed">A visual step-by-step roadmap guides you through each module sequentially, making your learning journey clear and structured.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-chart-line text-xl text-purple-600"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800">Skills Analytics</h3>
+            </div>
+            <p class="text-sm text-slate-500 leading-relaxed">Real-time analytics help you understand your strengths and identify areas where you need improvement across categories.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-award text-xl text-amber-600"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800">Hall of Fame</h3>
+            </div>
+            <p class="text-sm text-slate-500 leading-relaxed">Top performers are featured on the leaderboard! Complete modules and score high to earn your place among the best.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-book-open-reader text-xl text-green-600"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800">Resource Library</h3>
+            </div>
+            <p class="text-sm text-slate-500 leading-relaxed">Access PowerPoint presentations, documents, and other materials uploaded by administrators to support your learning.</p>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center pb-4">
+        <a href="{{ url_for('participant.dashboard') }}" 
+           class="inline-flex items-center gap-3 px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/25 transform hover:-translate-y-0.5">
+            <i class="fa-solid fa-rocket"></i>
+            Go to My Dashboard
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block header_title %}Notifications & Announcements{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div>
+        <h2 class="text-xl font-bold text-slate-800">Platform Announcements</h2>
+        <p class="text-sm text-slate-500 mt-1">Important updates from the administration.</p>
+    </div>
+
+    <div class="space-y-4">
+        {% for a in announcements %}
+        <div class="bg-white rounded-2xl border shadow-sm overflow-hidden
+            {% if a.priority == 'urgent' %}border-red-200 border-l-4 border-l-red-500{% elif a.priority == 'important' %}border-amber-200 border-l-4 border-l-amber-500{% else %}border-slate-100 border-l-4 border-l-indigo-500{% endif %}">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-3">
+                    {% if a.priority == 'urgent' %}
+                    <span class="px-2.5 py-1 bg-red-50 text-red-600 text-xs font-bold rounded-full uppercase"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Urgent</span>
+                    {% elif a.priority == 'important' %}
+                    <span class="px-2.5 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded-full uppercase"><i class="fa-solid fa-star mr-1"></i>Important</span>
+                    {% else %}
+                    <span class="px-2.5 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full uppercase"><i class="fa-solid fa-circle-info mr-1"></i>Update</span>
+                    {% endif %}
+                    <span class="text-xs text-slate-400">{{ a.created_at.strftime('%b %d, %Y at %I:%M %p') if a.created_at else '' }}</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">{{ a.title }}</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">{{ a.message }}</p>
+                <p class="text-xs text-slate-400 mt-3"><i class="fa-solid fa-user mr-1"></i>{{ a.author_name }}</p>
+            </div>
+        </div>
+        {% endfor %}
+        {% if not announcements %}
+        <div class="text-center py-16 bg-white rounded-2xl border border-slate-100">
+            <i class="fa-solid fa-bell-slash text-4xl text-slate-200 mb-4"></i>
+            <p class="text-slate-400 font-medium">No announcements yet. You're all caught up!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

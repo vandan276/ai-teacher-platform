@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}User Directory{% endblock %}
+{% block header_title %}User Directory{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header + Search -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-xl font-bold text-slate-800">Platform User Directory</h2>
+            <p class="text-sm text-slate-500 mt-1">View all registered admins, employees, and participants.</p>
+        </div>
+        <form method="GET" class="flex items-center gap-3">
+            <div class="relative">
+                <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search users..."
+                    class="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm w-56">
+            </div>
+            <select name="role" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm text-slate-600">
+                <option value="">All Roles</option>
+                <option value="Admin" {% if role_filter == 'Admin' %}selected{% endif %}>Admin</option>
+                <option value="Employee" {% if role_filter == 'Employee' %}selected{% endif %}>Employee</option>
+                <option value="Participant" {% if role_filter == 'Participant' %}selected{% endif %}>Participant</option>
+            </select>
+            <button type="submit" class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition">Filter</button>
+            {% if search_query or role_filter %}
+            <a href="{{ url_for('employee.all_users') }}" class="px-4 py-2.5 text-sm text-slate-500 hover:text-slate-700 transition">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-3 gap-4">
+        {% set admin_count = users|selectattr('role','equalto','Admin')|list|length %}
+        {% set employee_count = users|selectattr('role','equalto','Employee')|list|length %}
+        {% set participant_count = users|selectattr('role','equalto','Participant')|list|length %}
+        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-user-shield text-white"></i>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-slate-800">{{ admin_count }}</p>
+                <p class="text-xs text-slate-500 font-medium uppercase tracking-widest">Admins</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 bg-violet-600 rounded-xl flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-user-tie text-white"></i>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-slate-800">{{ employee_count }}</p>
+                <p class="text-xs text-slate-500 font-medium uppercase tracking-widest">Employees</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-chalkboard-user text-white"></i>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-slate-800">{{ participant_count }}</p>
+                <p class="text-xs text-slate-500 font-medium uppercase tracking-widest">Participants</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white shadow-sm border border-slate-100 rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">User</th>
+                        <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Role</th>
+                        <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">District</th>
+                        <th class="px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-slate-100">
+                    {% for user in users %}
+                    <tr class="hover:bg-slate-50/70 transition-colors">
+                        <td class="px-8 py-5 whitespace-nowrap">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shrink-0
+                                    {% if user.role == 'Admin' %}bg-slate-800{% elif user.role == 'Employee' %}bg-violet-600{% else %}bg-indigo-500{% endif %}">
+                                    {{ user.name[0].upper() }}
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-900">{{ user.name }}</div>
+                                    <div class="text-xs text-slate-400">{{ user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-5 whitespace-nowrap">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold
+                                {% if user.role == 'Admin' %}bg-slate-100 text-slate-700 border border-slate-200
+                                {% elif user.role == 'Employee' %}bg-violet-50 text-violet-700 border border-violet-100
+                                {% else %}bg-indigo-50 text-indigo-700 border border-indigo-100{% endif %}">
+                                {% if user.role == 'Admin' %}<i class="fa-solid fa-user-shield mr-1.5 text-[10px]"></i>
+                                {% elif user.role == 'Employee' %}<i class="fa-solid fa-user-tie mr-1.5 text-[10px]"></i>
+                                {% else %}<i class="fa-solid fa-chalkboard-user mr-1.5 text-[10px]"></i>{% endif %}
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td class="px-8 py-5 whitespace-nowrap">
+                            <span class="text-sm text-slate-600">{{ user.district_name or '—' }}</span>
+                        </td>
+                        <td class="px-8 py-5 whitespace-nowrap">
+                            {% if user.is_approved %}
+                                <span class="inline-flex items-center gap-1.5 text-green-600 text-sm font-bold">
+                                    <span class="w-2 h-2 rounded-full bg-green-500"></span> Active
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center gap-1.5 text-amber-600 text-sm font-bold">
+                                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Pending
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not users %}
+                    <tr>
+                        <td colspan="4" class="px-8 py-16 text-center text-slate-400">
+                            <i class="fa-solid fa-users-slash text-3xl mb-4 block opacity-30"></i>
+                            No users found matching your filters.
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <div class="px-8 py-4 border-t border-slate-100 text-sm text-slate-400">
+            Showing {{ users|length }} user{{ 's' if users|length != 1 else '' }}
+        </div>
+    </div>
+</div>
+{% endblock %}
