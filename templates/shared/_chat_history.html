@@ -1,0 +1,16 @@
+{% for msg in chat_history %}
+    <div class="flex {% if msg.sender_id == session.user_id %}justify-end{% else %}justify-start{% endif %}">
+        <div class="max-w-[70%] {% if msg.sender_id == session.user_id %}bg-indigo-600 text-white rounded-2xl rounded-tr-none shadow-indigo-200{% else %}bg-slate-100 text-slate-800 rounded-2xl rounded-tl-none{% endif %} p-4 shadow-sm">
+            <p class="text-sm leading-relaxed">{{ msg.message }}</p>
+            <p class="text-[10px] mt-2 opacity-70 text-right">
+                {{ msg.timestamp.strftime('%H:%M') if msg.timestamp else '' }}
+            </p>
+        </div>
+    </div>
+{% endfor %}
+{% if not chat_history %}
+<div class="h-full flex flex-col items-center justify-center text-slate-400 italic">
+    <i class="fa-regular fa-comments text-4xl mb-4 opacity-20 text-indigo-600"></i>
+    <p>Send your first message to {{ selected_contact.name if selected_contact else selected_employee.name }}.</p>
+</div>
+{% endif %}

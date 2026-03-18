@@ -20,8 +20,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code
 COPY . .
 
-# Expose the port Koyeb expects
-EXPOSE 8000
+# Expose the port the app runs on
+EXPOSE 5001
 
-# Run with Gunicorn (production server)
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "app:create_app()"]
+# Run the application
+CMD ["python", "app.py"]

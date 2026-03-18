@@ -46,6 +46,10 @@
                         <input type="text" name="location" placeholder="Online / Room 101" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
                     </div>
                 </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Event Link (Optional)</label>
+                    <input type="url" name="link" placeholder="https://zoom.us/j/123..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
+                </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Date</label>
@@ -89,6 +93,9 @@
                 {% endif %}
                 {% if event.location %}
                 <p class="text-xs text-slate-400 mt-2"><i class="fa-solid fa-location-dot mr-1"></i>{{ event.location }}</p>
+                {% endif %}
+                {% if event.link %}
+                <a href="{{ event.link }}" target="_blank" class="text-xs text-indigo-500 hover:text-indigo-600 mt-2 inline-block"><i class="fa-solid fa-link mr-1"></i>{{ event.link }}</a>
                 {% endif %}
             </div>
             <form action="{{ url_for('admin.delete_event', event_id=event.id) }}" method="POST">

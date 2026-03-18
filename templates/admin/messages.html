@@ -69,9 +69,9 @@
             </div>
 
             <div class="p-6 border-t border-slate-100">
-                <form action="{{ url_for('admin.send_message') }}" method="POST" class="flex items-center gap-4">
+                <form id="chat-form" action="{{ url_for('admin.send_message') }}" method="POST" class="flex items-center gap-4">
                     <input type="hidden" name="receiver_id" value="{{ selected_employee.id }}">
-                    <input type="text" name="message" required autocomplete="off"
+                    <input type="text" name="message" id="message-input" required autocomplete="off"
                            class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400"
                            placeholder="Type your message here...">
                     <button type="submit" class="w-14 h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl flex items-center justify-center transition-all shadow-lg shadow-indigo-500/20 transform hover:-translate-y-1">

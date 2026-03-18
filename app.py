@@ -20,12 +20,14 @@ def create_app():
     from routes.employee import employee_bp
     from routes.participant import participant_bp
     from routes.graph_auth import graph_auth_bp
+    from routes.google_auth import google_auth_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(employee_bp, url_prefix='/employee')
     app.register_blueprint(participant_bp, url_prefix='/participant')
     app.register_blueprint(graph_auth_bp, url_prefix='/microsoft')
+    app.register_blueprint(google_auth_bp, url_prefix='/google')
 
     @app.route('/')
     def index():

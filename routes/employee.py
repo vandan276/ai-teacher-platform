@@ -112,8 +112,7 @@ def send_message():
     message_text = request.form.get('message')
     
     if not receiver_id or not message_text:
-        flash('Recipient and message text are required.', 'danger')
-        return redirect(url_for('employee.messages'))
+        return {'error': 'Missing data'}, 400
         
     cur = mysql.connection.cursor()
     cur.execute("INSERT INTO messages (sender_id, receiver_id, message) VALUES (%s, %s, %s)",
@@ -121,4 +120,40 @@ def send_message():
     mysql.connection.commit()
     cur.close()
     
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return {'status': 'success'}
     return redirect(url_for('employee.messages', contact_id=receiver_id))
+
+@employee_bp.route('/messages/fetch/<int:contact_id>')
+@login_required
+@role_required('Employee')
+def fetch_chat(contact_id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id, name, role FROM users WHERE id = %s", (contact_id,))
+    selected_contact = cur.fetchone()
+    
+    cur.execute("""
+        SELECT m.*, s.name as sender_name 
+        FROM messages m 
+        JOIN users s ON m.sender_id = s.id 
+        WHERE (m.sender_id = %s AND m.receiver_id = %s) 
+           OR (m.sender_id = %s AND m.receiver_id = %s)
+        ORDER BY m.timestamp ASC
+    """, (session['user_id'], contact_id, contact_id, session['user_id']))
+    chat_history = cur.fetchall()
+    
+    cur.execute("UPDATE messages SET is_read = TRUE WHERE receiver_id = %s AND sender_id = %s", (session['user_id'], contact_id))
+    mysql.connection.commit()
+    cur.close()
+    
+    return render_template('shared/_chat_history.html', chat_history=chat_history, selected_contact=selected_contact)
+
+@employee_bp.route('/resources')
+@login_required
+@role_required('Employee')
+def resources():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM resources ORDER BY category ASC, title ASC")
+    resources_list = cur.fetchall()
+    cur.close()
+    return render_template('participant/resources.html', resources=resources_list)
