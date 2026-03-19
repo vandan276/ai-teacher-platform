@@ -20,6 +20,8 @@ def login():
         return redirect(url_for('auth.login'))
         
     redirect_uri = url_for('google_auth.callback', _external=True)
+    if request.headers.get('X-Forwarded-Proto') == 'https':
+        redirect_uri = redirect_uri.replace('http://', 'https://')
     
     # Generate the OAuth authorization URL
     auth_url = (
@@ -40,6 +42,8 @@ def callback():
         return redirect(url_for('auth.login'))
         
     redirect_uri = url_for('google_auth.callback', _external=True)
+    if request.headers.get('X-Forwarded-Proto') == 'https':
+        redirect_uri = redirect_uri.replace('http://', 'https://')
     
     # Exchange auth code for access token
     token_response = requests.post(TOKEN_URL, data={
