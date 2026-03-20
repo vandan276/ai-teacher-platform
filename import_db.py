@@ -40,10 +40,20 @@ def import_db():
         print(f"Connected to {host}. Executing backup.sql...")
         
         with open('backup.sql', 'r') as f:
-            sql_file = f.read()
+            lines = f.readlines()
         
-        # Use multi=True for efficient execution of the entire dump
-        results = cursor.execute(sql_file, multi=True)
+        # Filter out lines that require SUPER privileges (GTID, LOG_BIN, etc.)
+        filtered_lines = []
+        for line in lines:
+            if any(term in line.upper() for term in ['GTID_PURGED', 'SQL_LOG_BIN', 'GLOBAL.']):
+                print(f"Skipping restricted line: {line.strip()[:50]}...")
+                continue
+            filtered_lines.append(line)
+        
+        sql_content = "".join(filtered_lines)
+        
+        # Use multi=True for efficient execution
+        results = cursor.execute(sql_content, multi=True)
         for result in results:
             continue # Iterate to ensure all statements are processed
         
