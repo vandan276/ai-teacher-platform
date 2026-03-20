@@ -12,7 +12,8 @@ def import_db():
     print("Starting Database Migration...", file=sys.stderr, flush=True)
     
     # Get config from Environment Variables (Prioritize Railway's Public Names)
-    host = os.environ.get('MYSQLHOST') or os.environ.get('MYSQL_HOST')
+    env_mysql_host = os.environ.get('MYSQLHOST')
+    host = env_mysql_host or os.environ.get('MYSQL_HOST')
     user = os.environ.get('MYSQLUSER') or os.environ.get('MYSQL_USER')
     password = os.environ.get('MYSQLPASSWORD') or os.environ.get('MYSQL_PASSWORD')
     database = os.environ.get('MYSQLDATABASE') or os.environ.get('MYSQL_DB')
@@ -22,8 +23,8 @@ def import_db():
     # Force ignore internal host if it was accidentally kept
     if host and '.internal' in host:
         print(f"DEBUG: Ignoring internal host {host}, looking for public one...", file=sys.stderr, flush=True)
-        if os.environ.get('MYSQLHOST') and '.internal' not in os.environ.get('MYSQLHOST'):
-             host = os.environ.get('MYSQLHOST')
+        if env_mysql_host and '.internal' not in env_mysql_host:
+             host = env_mysql_host
 
     if not all([host, user, password, database]):
         print(f"ERROR: Missing database environment variables! (Host: {host}, User: {user}, DB: {database})", file=sys.stderr, flush=True)
