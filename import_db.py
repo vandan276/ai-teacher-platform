@@ -11,34 +11,39 @@ import sys
 def import_db():
     print("Starting Database Migration...", file=sys.stderr, flush=True)
     
-    # Get config from Environment Variables (set these on Render!)
-    host = os.environ.get('MYSQL_HOST')
-    user = os.environ.get('MYSQL_USER')
-    password = os.environ.get('MYSQL_PASSWORD')
-    database = os.environ.get('MYSQL_DB')
-    port = os.environ.get('MYSQL_PORT', 25060)
+    # Get config from Environment Variables (Try both standard and Railway names)
+    host = os.environ.get('MYSQL_HOST') or os.environ.get('MYSQLHOST')
+    user = os.environ.get('MYSQL_USER') or os.environ.get('MYSQLUSER')
+    password = os.environ.get('MYSQL_PASSWORD') or os.environ.get('MYSQLPASSWORD')
+    database = os.environ.get('MYSQL_DB') or os.environ.get('MYSQLDATABASE')
+    port = os.environ.get('MYSQL_PORT') or os.environ.get('MYSQLPORT') or 3306
     ssl_ca_content = os.environ.get('MYSQL_SSL_CA_CONTENT')
 
-    if not all([host, user, password, database, ssl_ca_content]):
-        print(f"ERROR: Missing database environment variables! (Host: {bool(host)}, User: {bool(user)}, Pass: {bool(password)}, DB: {bool(database)}, SSL: {bool(ssl_ca_content)})", file=sys.stderr, flush=True)
+    if not all([host, user, password, database]):
+        print(f"ERROR: Missing database environment variables! (Host: {bool(host)}, User: {bool(user)}, Pass: {bool(password)}, DB: {bool(database)})", file=sys.stderr, flush=True)
         return
 
-    # Use a temporary file for the SSL CA
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.pem') as tf:
-        tf.write(ssl_ca_content.encode())
-        ca_path = tf.name
+    ca_path = None
+    # Use a temporary file for the SSL CA if provided
+    if ssl_ca_content:
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pem') as tf:
+            tf.write(ssl_ca_content.encode())
+            ca_path = tf.name
 
     try:
-        print(f"DEBUG: Attempting to connect to {host}:{port}...", file=sys.stderr, flush=True)
-        conn = mysql.connector.connect(
-            host=host,
-            user=user,
-            password=password,
-            database=database,
-            port=port,
-            ssl_ca=ca_path,
-            connect_timeout=10 # Add timeout to prevent hanging forever
-        )
+        print(f"DEBUG: Attempting to connect to {host}:{port} (SSL: {bool(ca_path)})...", file=sys.stderr, flush=True)
+        conn_args = {
+            'host': host,
+            'user': user,
+            'password': password,
+            'database': database,
+            'port': int(port),
+            'connect_timeout': 15
+        }
+        if ca_path:
+            conn_args['ssl_ca'] = ca_path
+            
+        conn = mysql.connector.connect(**conn_args)
         print("DEBUG: Connection established!", file=sys.stderr, flush=True)
         cursor = conn.cursor()
         
