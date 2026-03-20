@@ -80,7 +80,7 @@ def import_db():
             cursor.close()
             conn.close()
         # Cleanup temp CA file
-        if os.path.exists(ca_path):
+        if ca_path and os.path.exists(ca_path):
             os.remove(ca_path)
 
 if __name__ == "__main__":
