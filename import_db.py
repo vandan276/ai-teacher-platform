@@ -27,18 +27,20 @@ def import_db():
         ca_path = tf.name
 
     try:
+        print(f"DEBUG: Attempting to connect to {host}:{port}...")
         conn = mysql.connector.connect(
             host=host,
             user=user,
             password=password,
             database=database,
             port=port,
-            ssl_ca=ca_path
+            ssl_ca=ca_path,
+            connect_timeout=10 # Add timeout to prevent hanging forever
         )
+        print("DEBUG: Connection established!")
         cursor = conn.cursor()
         
-        print(f"Connected to {host}. Executing backup.sql...")
-        
+        print(f"DEBUG: Reading backup.sql...")
         with open('backup.sql', 'r') as f:
             lines = f.readlines()
         
@@ -53,16 +55,16 @@ def import_db():
         sql_content = "".join(filtered_lines)
         
         # Use multi=True for efficient execution
-        print("Starting SQL execution...")
+        print(f"Starting SQL execution ({len(filtered_lines)} lines)...")
         results = cursor.execute(sql_content, multi=True)
         count = 0
         for result in results:
             count += 1
-            if count % 10 == 0:
-                print(f"Executed {count} statements...")
+            if count % 20 == 0:
+                print(f"Executed {count} batches...")
         
         conn.commit()
-        print(f"SUCCESS: Database migration completed! {count} statements executed.")
+        print(f"SUCCESS: Database migration completed! {count} iterations.")
         
     except Exception as e:
         print(f"CRITICAL ERROR: {e}")
