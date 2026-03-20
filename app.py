@@ -45,6 +45,12 @@ def create_app():
         from flask import render_template
         return render_template('index.html')
 
+    @app.route('/import-db')
+    def run_import():
+        from import_db import import_db
+        import_db()
+        return "Migration triggered! Please check your Render logs for the 'SUCCESS' message."
+
     return app
 
 if __name__ == '__main__':
