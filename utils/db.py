@@ -43,8 +43,13 @@ class MySQL:
                 'database': current_app.config['MYSQL_DB'],
                 'port': current_app.config['MYSQL_PORT'],
             }
-            if current_app.config.get('MYSQL_UNIX_SOCKET'):
-                config['unix_socket'] = current_app.config['MYSQL_UNIX_SOCKET']
+            if current_app.config.get('MYSQL_SSL_CA_CONTENT'):
+                import tempfile
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.pem') as tf:
+                    tf.write(current_app.config['MYSQL_SSL_CA_CONTENT'].encode())
+                    config['ssl_ca'] = tf.name
+            elif current_app.config.get('MYSQL_SSL_CA'):
+                config['ssl_ca'] = current_app.config['MYSQL_SSL_CA']
             
             try:
                 conn = mysql.connector.connect(**config)

@@ -5,20 +5,21 @@
 {% block content %}
 <div class="space-y-8" x-data="{ showModal: false }">
     <!-- Header with Action -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
-            <h2 class="text-2xl font-bold text-slate-800">Platform Library</h2>
+            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Platform Library</h2>
             <p class="text-slate-500 text-sm">Add or remove learning materials for participants.</p>
         </div>
-        <button @click="showModal = true" class="btn-premium flex items-center gap-3 px-6 py-4 shadow-xl">
+        <button @click="showModal = true" class="btn-premium flex items-center justify-center gap-3 px-6 py-4 shadow-xl whitespace-nowrap">
             <i class="fa-solid fa-plus-circle text-lg"></i>
-            <span class="text-base">Add New Platform Resource</span>
+            <span class="text-base">Add New Resource</span>
         </button>
     </div>
 
     <!-- Resources Table -->
-    <div class="glass-card overflow-hidden">
-        <table class="w-full text-left border-collapse">
+    <div class="glass-card shadow-sm border border-slate-100 rounded-2xl">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[800px] md:min-w-0">
             <thead>
                 <tr class="bg-slate-50/50">
                     <th class="px-6 py-4 text-xs font-bold uppercase text-slate-500 border-b border-slate-100">Title & Category</th>
@@ -56,7 +57,8 @@
                 </tr>
                 {% endif %}
             </tbody>
-        </table>
+            </table>
+        </div>
     </div>
 
     <!-- Add Resource Modal -->

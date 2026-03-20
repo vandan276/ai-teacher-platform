@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}ARCH Foundation x Microsoft Elevate - Empowering Educators{% endblock %}
+
+{% block full_layout %}
+<div class="min-h-screen bg-white selection:bg-indigo-100 selection:text-indigo-900">
+    <!-- Premium Navbar -->
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2 md:gap-4">
+                <span class="text-xl md:text-2xl font-black text-slate-900 tracking-tighter uppercase sm:normal-case">ARCH <span class="text-indigo-600 hidden xs:inline">Foundation</span></span>
+                <div class="hidden sm:block h-6 w-px bg-slate-200"></div>
+                <span class="hidden sm:block text-xs md:text-sm font-bold text-slate-400 uppercase tracking-widest">Microsoft Elevate</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="#about" class="hidden md:block text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">About Us</a>
+                <a href="#initiatives" class="hidden md:block text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">Initiatives</a>
+                <a href="{{ url_for('auth.login') }}" class="px-6 py-3 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-indigo-600 transition-all shadow-lg shadow-slate-900/10">
+                    Portal Login
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+            <div class="relative z-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 mb-8">
+                    <span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
+                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Collaborating for a better tomorrow</span>
+                </div>
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-black text-slate-900 leading-[1.1] mb-8 tracking-tighter">
+                    Empowering <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Futures Through</span> <br>
+                    Education.
+                </h1>
+                <p class="text-xl text-slate-500 mb-10 leading-relaxed max-w-xl">
+                    ARCH Foundation focuses on enhancing education, promoting sustainability, and empowering communities across India. Together with Microsoft Elevate, we are mastering AI for modern education.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="{{ url_for('auth.register') }}" class="px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 transform hover:-translate-y-1">
+                        Register Now
+                    </a>
+                    <a href="#about" class="px-8 py-4 bg-slate-50 text-slate-900 font-bold rounded-2xl hover:bg-slate-100 transition-all">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="absolute -top-12 -right-12 w-64 h-64 bg-indigo-400/20 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-12 -left-12 w-64 h-64 bg-violet-400/20 rounded-full blur-3xl"></div>
+                <img src="{{ url_for('static', filename='images/arch_education.png') }}" alt="Empowering Children" class="relative rounded-[40px] shadow-2xl border-8 border-white object-cover aspect-[4/5]">
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="p-8 bg-white rounded-3xl border border-slate-200/60 shadow-sm text-center">
+                    <div class="text-4xl font-black text-indigo-600 mb-2">4 Lac+</div>
+                    <div class="text-sm font-bold text-slate-500 uppercase tracking-widest">Children Impacted</div>
+                </div>
+                <div class="p-8 bg-white rounded-3xl border border-slate-200/60 shadow-sm text-center">
+                    <div class="text-4xl font-black text-indigo-600 mb-2">8000+</div>
+                    <div class="text-sm font-bold text-slate-500 uppercase tracking-widest">Women Empowered</div>
+                </div>
+                <div class="p-8 bg-white rounded-3xl border border-slate-200/60 shadow-sm text-center">
+                    <div class="text-4xl font-black text-indigo-600 mb-2">5000+</div>
+                    <div class="text-sm font-bold text-slate-500 uppercase tracking-widest">Girls Supported</div>
+                </div>
+                <div class="p-8 bg-white rounded-3xl border border-slate-200/60 shadow-sm text-center">
+                    <div class="text-4xl font-black text-indigo-600 mb-2">300+</div>
+                    <div class="text-sm font-bold text-slate-500 uppercase tracking-widest">Volunteers</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-20 items-center">
+                <div class="order-2 lg:order-1 relative">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-4 pt-12">
+                            <div class="aspect-square bg-indigo-600 rounded-3xl flex items-center justify-center text-white text-4xl font-bold">A</div>
+                            <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1470&auto=format&fit=crop" class="aspect-square object-cover rounded-3xl" alt="Education">
+                        </div>
+                        <div class="space-y-4">
+                            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=1473&auto=format&fit=crop" class="aspect-square object-cover rounded-3xl" alt="Collaboration">
+                            <div class="aspect-square bg-slate-900 rounded-3xl flex items-center justify-center text-white text-4xl font-bold">R</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2">
+                    <h2 class="text-4xl font-black text-slate-900 mb-8 tracking-tight">About ARCH Foundation</h2>
+                    <p class="text-lg text-slate-600 mb-10 leading-relaxed">
+                        ARCH stands as a beacon of social responsibility, striving to improve lives, empower marginalized groups, and foster a more inclusive society. Since its inception in 2015, the ARCH Foundation has impacted over 10,000 lives through 100+ community projects.
+                    </p>
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 flex-shrink-0">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 mb-1">Education First</h4>
+                                <p class="text-sm text-slate-500">Targeted initiatives in education to address challenges faced by marginalized communities.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center text-violet-600 flex-shrink-0">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 mb-1">Sustainability</h4>
+                                <p class="text-sm text-slate-500">Promoting environmental sustainability through corporate social responsibility partnerships.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Microsoft Elevate Section -->
+    <section id="initiatives" class="py-24 bg-slate-900 text-white relative overflow-hidden rounded-[80px] mx-6 mb-24">
+        <div class="absolute inset-0 opacity-20">
+            <div class="grid grid-cols-12 h-full w-full">
+                {% for i in range(48) %}
+                <div class="border border-white/10 aspect-square"></div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-12 relative z-10 grid lg:grid-cols-2 gap-20 items-center">
+            <div>
+                <span class="inline-block px-4 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-widest mb-8">Microsoft Elevate Collaboration</span>
+                <h2 class="text-5xl font-black mb-8 tracking-tighter">AI Training for <br> <span class="text-indigo-400">The Modern Educator</span></h2>
+                <p class="text-lg text-slate-300 mb-10 leading-relaxed">
+                    Our collaboration with Microsoft focuses on equipping teachers with cutting-edge AI skills. Through the Microsoft Elevate portal, educators gain access to modules, assessments, and certifications that define the future of teaching.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 text-left">
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <i class="fa-solid fa-brain text-indigo-400 mb-3 text-2xl"></i>
+                        <h5 class="font-bold mb-1">AI Literacy</h5>
+                        <p class="text-xs text-slate-400">Mastering the fundamentals for classroom use.</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <i class="fa-solid fa-certificate text-indigo-400 mb-3 text-2xl"></i>
+                        <h5 class="font-bold mb-1">Certifications</h5>
+                        <p class="text-xs text-slate-400">Industry-recognized mastery badges.</p>
+                    </div>
+                </div>
+                <a href="{{ url_for('auth.login') }}" class="inline-flex items-center gap-2 px-10 py-4 bg-white text-slate-900 font-bold rounded-2xl hover:bg-indigo-50 transition-all shadow-2xl shadow-black/40">
+                    Access Training Portal
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="relative">
+                <img src="{{ url_for('static', filename='images/microsoft_ai_training.png') }}" alt="AI Training" class="rounded-[40px] shadow-2xl border-4 border-white/10">
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="flex items-center gap-4">
+                <span class="text-xl font-black text-slate-900 tracking-tighter">ARCH <span class="text-indigo-600">Foundation</span></span>
+                <p class="text-sm text-slate-500 font-medium ml-4 border-l pl-4 border-slate-200">© 2015-2026. All rights reserved.</p>
+            </div>
+            <div class="flex items-center gap-8">
+                <a href="https://www.archfoundation.in" target="_blank" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Website</a>
+                <a href="#" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Projects</a>
+                <a href="#" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Contact</a>
+            </div>
+        </div>
+    </footer>
+</div>
+{% endblock %}

@@ -13,146 +13,149 @@
 <body class="bg-slate-50 antialiased overflow-x-hidden">
     {% block full_layout %}
         {% if session.get('user_id') %}
-            <!-- Dashboard Layout with Sidebar -->
-            <div class="flex min-h-screen" x-data="{ sidebarOpen: true }">
-                <!-- Sidebar -->
-                <aside :class="sidebarOpen ? 'w-64' : 'w-20'" class="bg-white border-r border-slate-200 transition-all duration-300 flex flex-col fixed h-full z-30">
+            <!-- Dashboard Layout with Responsive Sidebar -->
+            <div class="flex min-h-screen relative" 
+                 x-data="{ 
+                    sidebarOpen: window.innerWidth >= 1024, 
+                    mobileMenuOpen: false,
+                    isMobile: window.innerWidth < 1024,
+                    init() {
+                        window.addEventListener('resize', () => {
+                            this.isMobile = window.innerWidth < 1024;
+                            if (this.isMobile) this.sidebarOpen = false;
+                            else if (window.innerWidth >= 1024) this.sidebarOpen = true;
+                        });
+                    }
+                 }">
+                <!-- Sidebar (Desktop & Mobile Slide-over) -->
+                <aside 
+                    :class="{ 
+                        'translate-x-0': mobileMenuOpen || (sidebarOpen && !isMobile), 
+                        '-translate-x-full': !mobileMenuOpen && isMobile,
+                        'w-64': sidebarOpen || isMobile,
+                        'w-20': !sidebarOpen && !isMobile
+                    }"
+                    class="bg-white border-r border-slate-200 transition-all duration-300 flex flex-col fixed h-full z-50 lg:z-30 shadow-xl lg:shadow-none">
+                    
                     <div class="p-6 flex items-center justify-between">
-                        <div x-show="sidebarOpen" class="font-bold text-xl tracking-tight text-slate-800">
+                        <div x-show="sidebarOpen || isMobile" class="font-bold text-xl tracking-tight text-slate-800">
                             AI <span class="text-indigo-600">Upskill</span>
                         </div>
-                        <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                        <!-- Desktop Toggle -->
+                        <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:block p-2 rounded-lg hover:bg-slate-100 text-slate-500">
                             <i class="fa-solid" :class="sidebarOpen ? 'fa-indent' : 'fa-outdent'"></i>
+                        </button>
+                        <!-- Mobile Close -->
+                        <button @click="mobileMenuOpen = false" class="lg:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                            <i class="fa-solid fa-xmark text-xl"></i>
                         </button>
                     </div>
 
-                    <nav class="flex-1 px-4 space-y-2 mt-4">
+                    <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto custom-scrollbar">
                         {% if session.get('role') == 'Admin' %}
                             <a href="{{ url_for('admin.dashboard') }}" class="sidebar-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
                                 <i class="fa-solid fa-chart-pie w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Dashboard</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Dashboard</span>
                             </a>
                             <a href="{{ url_for('admin.users') }}" class="sidebar-link {% if request.endpoint == 'admin.users' %}active{% endif %}">
                                 <i class="fa-solid fa-users w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Users</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Users</span>
                             </a>
                             <a href="{{ url_for('admin.modules') }}" class="sidebar-link {% if request.endpoint == 'admin.modules' %}active{% endif %}">
                                 <i class="fa-solid fa-book w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Modules</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Modules</span>
                             </a>
                             <a href="{{ url_for('admin.resources') }}" class="sidebar-link {% if request.endpoint == 'admin.resources' %}active{% endif %}">
                                 <i class="fa-solid fa-folder-tree w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Resources</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Resources</span>
                             </a>
                             <a href="{{ url_for('admin.messages') }}" class="sidebar-link {% if request.endpoint == 'admin.messages' %}active{% endif %}">
                                 <i class="fa-solid fa-comments w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Messages</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Messages</span>
                             </a>
                             <a href="{{ url_for('participant.hall_of_fame') }}" class="sidebar-link {% if request.endpoint == 'participant.hall_of_fame' %}active{% endif %}">
                                 <i class="fa-solid fa-trophy w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Leaderboard</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Leaderboard</span>
                             </a>
                             <a href="{{ url_for('admin.announcements') }}" class="sidebar-link {% if request.endpoint == 'admin.announcements' %}active{% endif %}">
                                 <i class="fa-solid fa-bullhorn w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Announcements</span>
-                            </a>
-                            <a href="{{ url_for('admin.events') }}" class="sidebar-link {% if request.endpoint == 'admin.events' %}active{% endif %}">
-                                <i class="fa-solid fa-calendar-days w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Events</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">News</span>
                             </a>
                         {% elif session.get('role') == 'Employee' %}
                             <a href="{{ url_for('employee.dashboard') }}" class="sidebar-link {% if request.endpoint == 'employee.dashboard' %}active{% endif %}">
                                 <i class="fa-solid fa-chart-line w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Monitoring</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Monitoring</span>
                             </a>
                             <a href="{{ url_for('employee.all_users') }}" class="sidebar-link {% if request.endpoint == 'employee.all_users' %}active{% endif %}">
                                 <i class="fa-solid fa-users w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">All Users</span>
-                            </a>
-                            <a href="{{ url_for('employee.resources') }}" class="sidebar-link {% if request.endpoint == 'employee.resources' %}active{% endif %}">
-                                <i class="fa-solid fa-book-open-reader w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Resources</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">All Users</span>
                             </a>
                             <a href="{{ url_for('employee.messages') }}" class="sidebar-link {% if request.endpoint == 'employee.messages' %}active{% endif %}">
                                 <i class="fa-solid fa-comments w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Messages</span>
-                            </a>
-                            <a href="{{ url_for('participant.hall_of_fame') }}" class="sidebar-link {% if request.endpoint == 'participant.hall_of_fame' %}active{% endif %}">
-                                <i class="fa-solid fa-trophy w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Leaderboard</span>
-                            </a>
-                            <a href="{{ url_for('participant.calendar') }}" class="sidebar-link {% if request.endpoint == 'participant.calendar' %}active{% endif %}">
-                                <i class="fa-solid fa-calendar-days w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Calendar</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Messages</span>
                             </a>
                         {% else %}
-                            <a href="{{ url_for('participant.welcome') }}" class="sidebar-link {% if request.endpoint == 'participant.welcome' %}active{% endif %}">
-                                <i class="fa-solid fa-circle-info w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Info</span>
-                            </a>
                             <a href="{{ url_for('participant.dashboard') }}" class="sidebar-link {% if request.endpoint == 'participant.dashboard' %}active{% endif %}">
                                 <i class="fa-solid fa-house w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Dashboard</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Dashboard</span>
                             </a>
                             <a href="{{ url_for('participant.roadmap') }}" class="sidebar-link {% if request.endpoint == 'participant.roadmap' %}active{% endif %}">
                                 <i class="fa-solid fa-map w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Roadmap</span>
-                            </a>
-                            <a href="{{ url_for('participant.analytics') }}" class="sidebar-link {% if request.endpoint == 'participant.analytics' %}active{% endif %}">
-                                <i class="fa-solid fa-chart-line w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">My Skills</span>
-                            </a>
-                            <a href="{{ url_for('participant.hall_of_fame') }}" class="sidebar-link {% if request.endpoint == 'participant.hall_of_fame' %}active{% endif %}">
-                                <i class="fa-solid fa-award w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Hall of Fame</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Roadmap</span>
                             </a>
                             <a href="{{ url_for('participant.resources') }}" class="sidebar-link {% if request.endpoint == 'participant.resources' %}active{% endif %}">
                                 <i class="fa-solid fa-book-open-reader w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Resources</span>
-                            </a>
-                            <a href="{{ url_for('participant.calendar') }}" class="sidebar-link {% if request.endpoint == 'participant.calendar' %}active{% endif %}">
-                                <i class="fa-solid fa-calendar-days w-6"></i>
-                                <span x-show="sidebarOpen" class="ml-3 font-medium">Calendar</span>
+                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Resources</span>
                             </a>
                         {% endif %}
                     </nav>
 
                     <div class="p-4 border-t border-slate-100">
-                        <div class="flex items-center space-x-3 p-2 rounded-lg bg-slate-50" x-show="sidebarOpen">
-                            <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
-                                {{ session.get('name')[0] if session.get('name') else 'U' }}
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-semibold truncate">{{ session.get('name') }}</p>
-                                <p class="text-xs text-slate-500 truncate">{{ session.get('role') }}</p>
-                            </div>
-                        </div>
-                        <a href="{{ url_for('auth.logout') }}" class="sidebar-link mt-4 text-red-500 hover:bg-red-50 hover:text-red-600">
+                        <a href="{{ url_for('auth.logout') }}" class="sidebar-link text-red-500 hover:bg-red-50 hover:text-red-600">
                             <i class="fa-solid fa-arrow-right-from-bracket w-6"></i>
-                            <span x-show="sidebarOpen" class="ml-3 font-medium">Logout</span>
+                            <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Logout</span>
                         </a>
                     </div>
                 </aside>
 
+                <!-- Mobile Overlay -->
+                <div x-show="mobileMenuOpen" @click="mobileMenuOpen = false" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden"></div>
+
                 <!-- Main Content Area -->
-                <main :class="sidebarOpen ? 'ml-64' : 'ml-20'" class="flex-1 transition-all duration-300">
-                    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-20 border-b border-slate-200 px-8 h-16 flex items-center justify-between">
-                        <h1 class="text-lg font-bold text-slate-800">{% block header_title %}{% endblock %}</h1>
-                        <div class="flex items-center space-x-4">
-                            <a href="{{ url_for('participant.notifications') }}" class="relative p-2 text-slate-400 hover:text-indigo-600 transition-colors">
-                                <i class="fa-regular fa-bell text-lg"></i>
-                                <span class="absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
-                            </a>
+                <main 
+                    :class="{ 
+                        'lg:ml-64': sidebarOpen, 
+                        'lg:ml-20': !sidebarOpen,
+                        'ml-0': true
+                    }" 
+                    class="flex-1 transition-all duration-300 min-w-0">
+                    
+                    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-20 border-b border-slate-200 px-4 md:px-8 h-16 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <!-- Mobile Menu Toggle -->
+                            <button @click="mobileMenuOpen = true" class="lg:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                                <i class="fa-solid fa-bars-staggered text-xl"></i>
+                            </button>
+                            <h1 class="text-sm md:text-lg font-bold text-slate-800 truncate">{% block header_title %}{% endblock %}</h1>
+                        </div>
+                        <div class="flex items-center space-x-2 md:space-x-4">
+                            <div class="hidden sm:block text-right">
+                                <p class="text-xs font-bold text-slate-800">{{ session.get('name') }}</p>
+                                <p class="text-[10px] text-slate-500 uppercase tracking-wider">{{ session.get('role') }}</p>
+                            </div>
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+                                {{ session.get('name')[0] if session.get('name') else 'U' }}
+                            </div>
                         </div>
                     </header>
 
-                    <div class="p-8">
+                    <div class="p-4 md:p-8">
                         {% with messages = get_flashed_messages(with_categories=true) %}
                             {% if messages %}
                                 {% for category, message in messages %}
                                     <div class="mb-6 p-4 rounded-xl flex items-center space-x-3 {% if category == 'success' %}bg-green-50 text-green-700 border border-green-100{% elif category == 'danger' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-blue-50 text-blue-700 border border-blue-100{% endif %}">
                                         <i class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'danger' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}"></i>
-                                        <span class="font-medium">{{ message }}</span>
+                                        <span class="font-medium text-sm">{{ message }}</span>
                                     </div>
                                 {% endfor %}
                             {% endif %}

@@ -12,6 +12,9 @@ def create_app():
     print(f"DEBUG: MYSQL_USER={app.config.get('MYSQL_USER')}")
     print(f"DEBUG: MYSQL_DB={app.config.get('MYSQL_DB')}")
 
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+    
     mysql.init_app(app)
 
     # Register Blueprints
@@ -40,7 +43,7 @@ def create_app():
             elif role == 'Participant':
                 return redirect(url_for('participant.dashboard'))
         from flask import render_template
-        return render_template('landing.html')
+        return render_template('index.html')
 
     return app
 

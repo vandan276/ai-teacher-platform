@@ -11,7 +11,7 @@
                 <h1 class="text-4xl font-extrabold tracking-tight">Welcome back, {{ session.get('name') }}!</h1>
                 <p class="mt-4 text-indigo-100 text-lg max-w-xl opacity-90">Your AI teacher training journey continues. Track your progress and unlock new modules today.</p>
             </div>
-            <div class="flex items-center space-x-8">
+            <div class="flex flex-wrap items-center gap-4 sm:gap-8">
                 {% if completed_modules == total_modules and total_modules > 0 %}
                 <a href="{{ url_for('participant.certificate') }}" target="_blank"
                     class="group relative flex items-center space-x-3 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl transition-all duration-300 hover:scale-105">

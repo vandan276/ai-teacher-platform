@@ -14,8 +14,9 @@
     </div>
 
     <!-- Leaderboard Table -->
-    <div class="glass-card overflow-hidden shadow-2xl border-none">
-        <table class="w-full text-left border-collapse">
+    <div class="glass-card shadow-2xl border-none">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[600px] md:min-w-0">
             <thead>
                 <tr class="bg-slate-50/50">
                     <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100">Rank</th>
@@ -74,7 +75,8 @@
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>
+            </table>
+        </div>
     </div>
 
     <!-- Info Footer -->

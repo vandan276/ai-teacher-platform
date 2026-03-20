@@ -9,29 +9,29 @@
 
     <div class="relative">
         <!-- Vertical Line -->
-        <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-slate-100 rounded-full"></div>
+        <div class="absolute left-8 md:left-1/2 transform -translate-x-1/2 h-full w-1 bg-slate-100 rounded-full"></div>
 
-        <div class="space-y-24 relative">
+        <div class="space-y-12 md:space-y-24 relative">
             {% for module in modules %}
-            <div class="flex items-center w-full {% if loop.index0 % 2 == 0 %}flex-row-reverse text-right{% else %}flex-row text-left{% endif %}">
+            <div class="flex flex-row md:items-center w-full {% if loop.index0 % 2 == 0 %}md:flex-row-reverse md:text-right{% else %}md:flex-row md:text-left{% endif %}">
                 <!-- Content Side -->
-                <div class="w-5/12 group">
-                    <div class="glass-card p-6 transform transition-all hover:scale-105 duration-300 {% if module.completed %}border-emerald-200 bg-emerald-50/10{% endif %}">
-                        <span class="text-xs font-bold uppercase tracking-widest {% if module.completed %}text-emerald-500{% else %}text-indigo-500{% endif %}">
+                <div class="ml-16 md:ml-0 w-full md:w-5/12 group">
+                    <div class="glass-card p-4 sm:p-6 transform transition-all hover:scale-105 duration-300 {% if module.completed %}border-emerald-200 bg-emerald-50/10{% endif %}">
+                        <span class="text-[10px] font-black uppercase tracking-widest {% if module.completed %}text-emerald-500{% else %}text-indigo-500{% endif %}">
                             Module {{ loop.index }}
                         </span>
-                        <h3 class="text-xl font-bold text-slate-800 mt-1">{{ module.title }}</h3>
+                        <h3 class="text-lg sm:text-xl font-bold text-slate-800 mt-1">{{ module.title }}</h3>
                         <p class="text-sm text-slate-500 mt-2 line-clamp-2">{{ module.description }}</p>
                         
                         {% if module.completed %}
-                        <div class="mt-4 flex items-center gap-2 {% if loop.index0 % 2 == 0 %}justify-end{% endif %}">
-                            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">Completed</span>
+                        <div class="mt-4 flex items-center gap-2 {% if loop.index0 % 2 == 0 %}md:justify-end{% endif %}">
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full uppercase">Completed</span>
                             <i class="fa-solid fa-circle-check text-emerald-500"></i>
                         </div>
                         {% else %}
-                        <div class="mt-4 {% if loop.index0 % 2 == 0 %}flex justify-end{% endif %}">
-                            <a href="{{ url_for('participant.module_detail', module_id=module.id) }}" class="text-sm font-bold text-indigo-600 hover:text-indigo-700">
-                                Start Module <i class="fa-solid fa-arrow-right ml-1"></i>
+                        <div class="mt-4 {% if loop.index0 % 2 == 0 %}md:flex md:justify-end{% endif %}">
+                            <a href="{{ url_for('participant.module_detail', module_id=module.id) }}" class="text-sm font-bold text-indigo-600 hover:text-indigo-700 inline-flex items-center">
+                                Start Module <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
                             </a>
                         </div>
                         {% endif %}
@@ -39,19 +39,19 @@
                 </div>
 
                 <!-- Center Node -->
-                <div class="w-2/12 flex justify-center z-10">
-                    <div class="w-12 h-12 rounded-full border-4 flex items-center justify-center transition-all duration-500
+                <div class="absolute left-8 md:relative md:left-0 md:w-2/12 flex justify-center z-10 transform -translate-x-1/2">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-4 flex items-center justify-center transition-all duration-500
                         {% if module.completed %}
                             bg-emerald-500 border-emerald-100 text-white shadow-[0_0_15px_rgba(16,185,129,0.4)]
                         {% else %}
                             bg-white border-slate-100 text-slate-300
                         {% endif %}">
-                        <i class="fa-solid {% if module.completed %}fa-check{% else %}fa-lock{% endif %}"></i>
+                        <i class="fa-solid {% if module.completed %}fa-check{% else %}fa-lock{% endif %} text-xs sm:text-base"></i>
                     </div>
                 </div>
 
                 <!-- Empty Side -->
-                <div class="w-5/12"></div>
+                <div class="hidden md:block md:w-5/12"></div>
             </div>
             {% endfor %}
         </div>

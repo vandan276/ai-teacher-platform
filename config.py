@@ -10,6 +10,8 @@ class Config:
     MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD') or ''
     MYSQL_DB = os.environ.get('MYSQL_DB') or 'teacher_platform'
     MYSQL_UNIX_SOCKET = os.environ.get('MYSQL_UNIX_SOCKET') or '/tmp/mysql.sock'
+    MYSQL_SSL_CA = os.environ.get('MYSQL_SSL_CA')
+    MYSQL_SSL_CA_CONTENT = os.environ.get('MYSQL_SSL_CA_CONTENT')
     MYSQL_CURSORCLASS = 'DictCursor'
 
     # Microsoft Graph API
