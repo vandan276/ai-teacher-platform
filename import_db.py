@@ -53,12 +53,16 @@ def import_db():
         sql_content = "".join(filtered_lines)
         
         # Use multi=True for efficient execution
+        print("Starting SQL execution...")
         results = cursor.execute(sql_content, multi=True)
+        count = 0
         for result in results:
-            continue # Iterate to ensure all statements are processed
+            count += 1
+            if count % 10 == 0:
+                print(f"Executed {count} statements...")
         
         conn.commit()
-        print("SUCCESS: Database migration completed successfully!")
+        print(f"SUCCESS: Database migration completed! {count} statements executed.")
         
     except Exception as e:
         print(f"CRITICAL ERROR: {e}")
