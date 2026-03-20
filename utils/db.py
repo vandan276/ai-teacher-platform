@@ -36,25 +36,33 @@ class MySQL:
     @property
     def connection(self):
         if 'mysql_db' not in g:
-            config = {
-                'host': current_app.config['MYSQL_HOST'],
-                'user': current_app.config['MYSQL_USER'],
-                'password': current_app.config['MYSQL_PASSWORD'],
-                'database': current_app.config['MYSQL_DB'],
-                'port': current_app.config['MYSQL_PORT'],
-            }
-            if current_app.config.get('MYSQL_SSL_CA_CONTENT'):
-                import tempfile
-                with tempfile.NamedTemporaryFile(delete=False, suffix='.pem') as tf:
-                    tf.write(current_app.config['MYSQL_SSL_CA_CONTENT'].encode())
-                    config['ssl_ca'] = tf.name
-            elif current_app.config.get('MYSQL_SSL_CA'):
-                config['ssl_ca'] = current_app.config['MYSQL_SSL_CA']
-            
+            import sys
             try:
+                port = current_app.config.get('MYSQL_PORT', 3306)
+                if isinstance(port, str) and port.isdigit():
+                    port = int(port)
+                
+                config = {
+                    'host': current_app.config['MYSQL_HOST'],
+                    'user': current_app.config['MYSQL_USER'],
+                    'password': current_app.config['MYSQL_PASSWORD'],
+                    'database': current_app.config['MYSQL_DB'],
+                    'port': port,
+                    'connect_timeout': 10
+                }
+                
+                ssl_ca_content = current_app.config.get('MYSQL_SSL_CA_CONTENT')
+                if ssl_ca_content and len(ssl_ca_content.strip()) > 10:
+                    import tempfile
+                    with tempfile.NamedTemporaryFile(delete=False, suffix='.pem') as tf:
+                        tf.write(ssl_ca_content.encode())
+                        config['ssl_ca'] = tf.name
+                elif current_app.config.get('MYSQL_SSL_CA'):
+                    config['ssl_ca'] = current_app.config['MYSQL_SSL_CA']
+                
                 conn = mysql.connector.connect(**config)
                 g.mysql_db = ConnectionWrapper(conn)
             except Exception as e:
-                print(f"DEBUG: MySQL Connection Failed: {e}", flush=True)
+                print(f"CRITICAL: MySQL Connection Failed: {e}", file=sys.stderr, flush=True)
                 return None
         return g.mysql_db
