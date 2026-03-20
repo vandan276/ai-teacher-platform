@@ -48,8 +48,11 @@ def create_app():
     @app.route('/import-db')
     def run_import():
         from import_db import import_db
-        import_db()
-        return "Migration triggered! Please check your Render logs for the 'SUCCESS' message."
+        try:
+            import_db()
+            return "<h1>SUCCESS!</h1><p>Database migration completed successfully. You can now <a href='/auth/login'>Login here</a>.</p>"
+        except Exception as e:
+            return f"<h1>MIGRATION FAILED</h1><p>Error: {str(e)}</p><p>Check your Environment Variables in Render!</p>"
 
     return app
 

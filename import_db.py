@@ -75,6 +75,7 @@ def import_db():
         
     except Exception as e:
         print(f"CRITICAL ERROR: {e}", file=sys.stderr, flush=True)
+        raise e # Re-raise so app.py can catch it and show to user
     finally:
         if 'conn' in locals() and conn.is_connected():
             cursor.close()
