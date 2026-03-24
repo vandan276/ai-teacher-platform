@@ -27,8 +27,16 @@ def dashboard():
         """, (selected_district,))
         teachers = cur.fetchall()
         
+    # Get upcoming events for widget
+    cur.execute("SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC LIMIT 3")
+    upcoming_events = cur.fetchall()
+    
     cur.close()
-    return render_template('employee/dashboard.html', districts=districts, teachers=teachers, selected_district=selected_district)
+    return render_template('employee/dashboard.html', 
+                           districts=districts, 
+                           teachers=teachers, 
+                           selected_district=selected_district,
+                           upcoming_events=upcoming_events)
 
 @employee_bp.route('/all-users')
 @login_required
@@ -157,3 +165,15 @@ def resources():
     resources_list = cur.fetchall()
     cur.close()
     return render_template('participant/resources.html', resources=resources_list)
+
+@employee_bp.route('/calendar')
+@login_required
+@role_required('Employee')
+def calendar():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC, event_time ASC")
+    upcoming_events = cur.fetchall()
+    cur.execute("SELECT * FROM events WHERE event_date < CURDATE() ORDER BY event_date DESC LIMIT 5")
+    past_events = cur.fetchall()
+    cur.close()
+    return render_template('participant/calendar.html', upcoming_events=upcoming_events, past_events=past_events)

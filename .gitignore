@@ -7,3 +7,6 @@ __pycache__/
 *.db
 .DS_Store
 static/certificates/
+*.log
+*.sql
+tmp_reconcile_points.py

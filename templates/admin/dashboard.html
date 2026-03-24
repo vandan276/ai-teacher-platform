@@ -50,7 +50,8 @@
                 </div>
             </div>
             <div class="mt-4 flex items-center text-sm">
-                <a href="{{ url_for('admin.modules') }}" class="text-indigo-600 font-bold hover:underline">Manage content &rarr;</a>
+                <a href="{{ url_for('admin.modules') }}" class="text-indigo-600 font-bold hover:underline">Manage
+                    content &rarr;</a>
             </div>
         </div>
 
@@ -65,7 +66,8 @@
                 </div>
             </div>
             <div class="mt-4 flex items-center text-sm">
-                <a href="{{ url_for('admin.resources') }}" class="text-indigo-600 font-bold hover:underline">Add or Remove Resources &rarr;</a>
+                <a href="{{ url_for('admin.resources') }}" class="text-indigo-600 font-bold hover:underline">Add or
+                    Remove Resources &rarr;</a>
             </div>
         </div>
     </div>
@@ -76,7 +78,8 @@
             <div class="flex items-center justify-between mb-8">
                 <h2 class="text-xl font-bold text-slate-800">District Enrollment</h2>
                 <div class="flex space-x-2">
-                    <span class="px-3 py-1 bg-slate-50 text-slate-500 text-xs font-bold rounded-full">Current Cycle</span>
+                    <span class="px-3 py-1 bg-slate-50 text-slate-500 text-xs font-bold rounded-full">Current
+                        Cycle</span>
                 </div>
             </div>
             <canvas id="districtChart" height="200"></canvas>
@@ -97,7 +100,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('districtChart').getContext('2d');
-    
+
     // Create gradient
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
     gradient.addColorStop(0, 'rgba(79, 70, 229, 0.8)');
@@ -107,33 +110,33 @@
         type: 'bar',
         data: {
             labels: [{% for stat in district_stats %}"{{ stat.district_name }}",{% endfor %}],
-            datasets: [{
-                label: 'Teachers',
-                data: [{% for stat in district_stats %}{{ stat.teacher_count }},{% endfor %}],
-                backgroundColor: gradient,
-                borderColor: '#4f46e5',
-                borderWidth: 2,
-                borderRadius: 8,
-                barThickness: 24,
+        datasets: [{
+            label: 'Teachers',
+            data: [{% for stat in district_stats %}{{ stat.teacher_count }}, {% endfor %}],
+        backgroundColor: gradient,
+        borderColor: '#4f46e5',
+        borderWidth: 2,
+        borderRadius: 8,
+        barThickness: 24,
             }]
         },
         options: {
-            plugins: {
-                legend: { display: false }
+        plugins: {
+            legend: { display: false }
+        },
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { display: false },
+                ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
             },
-            responsive: true,
-            scales: {
-                y: { 
-                    beginAtZero: true, 
-                    grid: { display: false },
-                    ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
-                }
+            x: {
+                grid: { display: false },
+                ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
             }
         }
+    }
     });
 
     const engagementCtx = document.getElementById('engagementChart').getContext('2d');
@@ -145,38 +148,38 @@
         type: 'line',
         data: {
             labels: [{% for label in engagement_labels %}"{{ label }}",{% endfor %}],
-            datasets: [{
-                label: 'Assessments Taken',
-                data: [{% for val in engagement_values %}{{ val }},{% endfor %}],
-                backgroundColor: engagementGradient,
-                borderColor: '#10b981',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#fff',
-                pointBorderColor: '#10b981',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6
+        datasets: [{
+            label: 'Assessments Taken',
+            data: [{% for val in engagement_values %}{{ val }}, {% endfor %}],
+        backgroundColor: engagementGradient,
+        borderColor: '#10b981',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#fff',
+        pointBorderColor: '#10b981',
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6
             }]
         },
         options: {
-            plugins: {
-                legend: { display: false }
+        plugins: {
+            legend: { display: false }
+        },
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { borderDash: [5, 5] },
+                ticks: { precision: 0, font: { family: 'Plus Jakarta Sans', weight: '600' } }
             },
-            responsive: true,
-            scales: {
-                y: { 
-                    beginAtZero: true, 
-                    grid: { borderDash: [5, 5] },
-                    ticks: { precision: 0, font: { family: 'Plus Jakarta Sans', weight: '600' } }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
-                }
+            x: {
+                grid: { display: false },
+                ticks: { font: { family: 'Plus Jakarta Sans', weight: '600' } }
             }
         }
+    }
     });
 </script>
 {% endblock %}

@@ -26,7 +26,7 @@ def import_db():
         if env_mysql_host and '.internal' not in env_mysql_host:
              host = env_mysql_host
 
-    if not all([host, user, password, database]):
+    if not all([host, user, database]):
         print(f"ERROR: Missing database environment variables! (Host: {host}, User: {user}, DB: {database})", file=sys.stderr, flush=True)
         return
 

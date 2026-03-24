@@ -9,7 +9,7 @@
             <h2 class="text-xl font-bold text-slate-800">Training Catalog</h2>
             <p class="text-sm text-slate-500">Manage learning content and assessments</p>
         </div>
-        <button onclick="document.getElementById('addModuleModal').classList.remove('hidden')" 
+        <button onclick="document.getElementById('addModuleModal').classList.remove('hidden')"
             class="btn-premium flex items-center space-x-2">
             <i class="fa-solid fa-plus text-xs"></i>
             <span>Add New Module</span>
@@ -20,22 +20,23 @@
         {% for module in modules %}
         <div class="premium-card group flex flex-col justify-between h-full">
             <div>
-                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                <div
+                    class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
                     <i class="fa-solid fa-book-open"></i>
                 </div>
-                <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{{ module.title }}</h3>
+                <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{{
+                    module.title }}</h3>
                 <p class="mt-3 text-sm text-slate-500 leading-relaxed line-clamp-3 italic">{{ module.description }}</p>
             </div>
-            
+
             <div class="mt-8 flex items-center justify-between pt-6 border-t border-slate-50">
-                <a href="{{ url_for('admin.manage_assessments', module_id=module.id) }}" 
+                <a href="{{ url_for('admin.manage_assessments', module_id=module.id) }}"
                     class="text-sm font-bold text-slate-600 hover:text-indigo-600 flex items-center space-x-1 transition">
                     <i class="fa-solid fa-clipboard-question mr-1"></i>
                     <span>Assessments</span>
                 </a>
-                <a href="{{ url_for('admin.delete_module', module_id=module.id) }}" 
-                    class="p-2 text-slate-300 hover:text-red-500 transition" 
-                    onclick="return confirm('Are you sure?')">
+                <a href="{{ url_for('admin.delete_module', module_id=module.id) }}"
+                    class="p-2 text-slate-300 hover:text-red-500 transition" onclick="return confirm('Are you sure?')">
                     <i class="fa-solid fa-trash-can"></i>
                 </a>
             </div>
@@ -45,37 +46,40 @@
 </div>
 
 <!-- Add Module Modal -->
-<div id="addModuleModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+<div id="addModuleModal"
+    class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-2xl w-full p-10 shadow-2xl transform transition-all border border-slate-100">
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Create Training Module</h2>
-            <button onclick="document.getElementById('addModuleModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
+            <button onclick="document.getElementById('addModuleModal').classList.add('hidden')"
+                class="text-slate-400 hover:text-slate-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
-        
+
         <form action="{{ url_for('admin.modules') }}" method="POST" class="space-y-6">
             <div>
                 <label class="block text-sm font-bold text-slate-700 mb-2">Module Title</label>
-                <input type="text" name="title" required 
+                <input type="text" name="title" required
                     class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                     placeholder="e.g., Introduction to Generative AI">
             </div>
             <div>
                 <label class="block text-sm font-bold text-slate-700 mb-2">Short Description</label>
-                <textarea name="description" rows="2" required 
+                <textarea name="description" rows="2" required
                     class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all placeholder:italic"
                     placeholder="Briefly describe what this module covers..."></textarea>
             </div>
             <div>
-                <label class="block text-sm font-bold text-slate-700 mb-2">Detailed Content (Markdown/HTML Support)</label>
-                <textarea name="content" rows="8" required 
+                <label class="block text-sm font-bold text-slate-700 mb-2">Detailed Content (Markdown/HTML
+                    Support)</label>
+                <textarea name="content" rows="8" required
                     class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-mono text-sm bg-slate-50"
                     placeholder="# Welcome to the AI Module..."></textarea>
             </div>
-            
+
             <div class="flex justify-end space-x-4 mt-10">
-                <button type="button" onclick="document.getElementById('addModuleModal').classList.add('hidden')" 
+                <button type="button" onclick="document.getElementById('addModuleModal').classList.add('hidden')"
                     class="px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition">
                     Cancel
                 </button>

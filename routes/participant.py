@@ -23,6 +23,18 @@ def welcome():
 def dashboard():
     user_id = session['user_id']
     cur = mysql.connection.cursor()
+    # Get user points
+    cur.execute("SELECT points FROM users WHERE id = %s", (user_id,))
+    points_data = cur.fetchone()
+    points = points_data['points'] if points_data else 0
+    
+    # Get user badges
+    cur.execute("""
+        SELECT b.* FROM badges b 
+        JOIN user_badges ub ON b.id = ub.badge_id 
+        WHERE ub.user_id = %s
+    """, (user_id,))
+    badges = cur.fetchall()
     
     # Get total modules
     cur.execute("SELECT COUNT(*) as count FROM modules")
@@ -32,10 +44,6 @@ def dashboard():
     cur.execute("SELECT COUNT(*) as count FROM progress WHERE user_id = %s AND completed = TRUE", (user_id,))
     completed_modules = cur.fetchone()['count']
     
-    # Check trophy
-    cur.execute("SELECT * FROM trophies WHERE user_id = %s AND achieved = TRUE", (user_id,))
-    trophy = cur.fetchone()
-    
     # Get module list with progress
     cur.execute("""
         SELECT m.*, p.completed 
@@ -44,12 +52,21 @@ def dashboard():
     """, (user_id,))
     modules = cur.fetchall()
     
+    has_trophy = (completed_modules == total_modules) if total_modules > 0 else False
+    
+    # Get upcoming events for widget
+    cur.execute("SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC LIMIT 3")
+    upcoming_events = cur.fetchall()
+    
     cur.close()
     return render_template('participant/dashboard.html', 
                            total_modules=total_modules, 
                            completed_modules=completed_modules, 
-                           has_trophy=bool(trophy),
-                           modules=modules)
+                           points=points,
+                           badges=badges,
+                           modules=modules,
+                           has_trophy=has_trophy,
+                           upcoming_events=upcoming_events)
 
 @participant_bp.route('/module/<int:module_id>')
 @login_required
@@ -89,18 +106,18 @@ def assessment(module_id):
                     (user_id, module_id, score, passed))
         
         if passed:
+            from utils.gamification import award_points, check_and_award_badges
+            
             cur.execute("INSERT INTO progress (user_id, module_id, completed) VALUES (%s, %s, TRUE) ON DUPLICATE KEY UPDATE completed = TRUE",
                         (user_id, module_id))
             
-            # Check for Trophy
-            cur.execute("SELECT COUNT(*) as count FROM modules")
-            total_m = cur.fetchone()['count']
-            cur.execute("SELECT COUNT(*) as count FROM progress WHERE user_id = %s AND completed = TRUE", (user_id,))
-            comp_m = cur.fetchone()['count']
+            # Award points and badges
+            award_points(user_id, 100) # Base points
+            if percentage == 100:
+                award_points(user_id, 50) # Bonus for perfect score
             
-            if total_m == comp_m:
-                cur.execute("INSERT INTO trophies (user_id, achieved) VALUES (%s, TRUE) ON DUPLICATE KEY UPDATE achieved = TRUE", (user_id,))
-        
+            check_and_award_badges(user_id)
+            
         mysql.connection.commit()
         cur.close()
         return redirect(url_for('participant.results', module_id=module_id, score=score, total=total, passed=passed))
@@ -192,21 +209,27 @@ def analytics():
 @login_required
 def hall_of_fame():
     cur = mysql.connection.cursor()
-    # Rank users by trophies and average score
+    
+    # Get total modules for status calculation
+    cur.execute("SELECT COUNT(*) as cnt FROM modules")
+    total_modules = cur.fetchone()['cnt'] or 0
+    
+    # Get top 10 players based on points
     cur.execute("""
-        SELECT u.name, d.district_name,
+        SELECT u.name, d.district_name, COALESCE(u.points, 0) as points,
                (SELECT COUNT(*) FROM progress p WHERE p.user_id = u.id AND p.completed = TRUE) as completed_count,
-               (SELECT AVG(score) FROM results r WHERE r.user_id = u.id AND r.passed = TRUE) as avg_score,
-               EXISTS(SELECT 1 FROM trophies t WHERE t.user_id = u.id AND t.achieved = TRUE) as has_trophy
+               (SELECT ROUND(AVG(r.score * 100.0 / 
+                   (SELECT COUNT(*) FROM assessments a WHERE a.module_id = r.module_id)), 1) 
+                FROM results r WHERE r.user_id = u.id AND r.passed = TRUE) as avg_score
         FROM users u
         LEFT JOIN districts d ON u.district_id = d.id
         WHERE u.role = 'Participant' AND u.is_approved = TRUE
-        ORDER BY has_trophy DESC, completed_count DESC, avg_score DESC
+        ORDER BY points DESC, completed_count DESC
         LIMIT 10
     """)
     leaderboard = cur.fetchall()
     cur.close()
-    return render_template('participant/hall_of_fame.html', leaderboard=leaderboard)
+    return render_template('participant/hall_of_fame.html', leaderboard=leaderboard, total_modules=total_modules)
 
 @participant_bp.route('/resources')
 @login_required
@@ -237,3 +260,35 @@ def notifications():
     all_announcements = cur.fetchall()
     cur.close()
     return render_template('participant/notifications.html', announcements=all_announcements)
+
+@participant_bp.route('/showroom')
+@login_required
+@role_required('Participant')
+def showroom():
+    user_id = session['user_id']
+    cur = mysql.connection.cursor()
+    
+    # Get user points
+    cur.execute("SELECT points FROM users WHERE id = %s", (user_id,))
+    points_data = cur.fetchone()
+    points = points_data['points'] if points_data else 0
+    
+    # Get user badges
+    cur.execute("""
+        SELECT b.*, ub.earned_at FROM badges b 
+        JOIN user_badges ub ON b.id = ub.badge_id 
+        WHERE ub.user_id = %s
+        ORDER BY ub.earned_at DESC
+    """, (user_id,))
+    badges = cur.fetchall()
+    
+    # Calculate Rank
+    cur.execute("SELECT COUNT(*) as count FROM users WHERE points > %s AND role = 'Participant'", (points,))
+    higher_users = cur.fetchone()['count']
+    rank = higher_users + 1
+    
+    cur.close()
+    return render_template('participant/showroom.html', 
+                           points=points, 
+                           badges=badges,
+                           rank=rank)

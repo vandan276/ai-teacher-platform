@@ -5,31 +5,40 @@
 <div class="min-h-screen bg-slate-50 antialiased overflow-x-hidden">
     <!-- Hero Section -->
     <div class="relative h-[650px] flex items-center justify-center overflow-hidden bg-slate-900">
-        <img src="{{ url_for('static', filename='images/landing_hero_bg.png') }}" alt="Hero Background" class="absolute inset-0 w-full h-full object-cover opacity-60">
+        <img src="{{ url_for('static', filename='images/landing_hero_bg.png') }}" alt="Hero Background"
+            class="absolute inset-0 w-full h-full object-cover opacity-60">
         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/50 to-slate-900"></div>
-        
+
         <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
             <div class="flex justify-center mb-8">
-                <a href="/" class="text-2xl font-bold text-white tracking-tight">AI Teacher <span class="text-indigo-400">Upskill</span></a>
+                <a href="/" class="text-2xl font-bold text-white tracking-tight">AI Teacher <span
+                        class="text-indigo-400">Upskill</span></a>
             </div>
-            <span class="inline-block py-1 px-3 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-bold tracking-widest uppercase mb-6">Microsoft Elevate Initiative</span>
+            <span
+                class="inline-block py-1 px-3 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-bold tracking-widest uppercase mb-6">Microsoft
+                Elevate Initiative</span>
             <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
-                Empowering Educators <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">Through AI Mastery</span>
+                Empowering Educators <br> <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">Through AI
+                    Mastery</span>
             </h1>
             <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-                A centralized platform for monitoring, managing, and mastering large-scale teacher upskilling programs in Artificial Intelligence.
+                A centralized platform for monitoring, managing, and mastering large-scale teacher upskilling programs
+                in Artificial Intelligence.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="{{ url_for('auth.login') }}" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/25 transform hover:-translate-y-1 w-full sm:w-auto text-center">
+                <a href="{{ url_for('auth.login') }}"
+                    class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-500/25 transform hover:-translate-y-1 w-full sm:w-auto text-center">
                     Get Started Now
                 </a>
-                <a href="#how-it-works" class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl transition-all backdrop-blur-md border border-white/10 w-full sm:w-auto text-center">
+                <a href="#how-it-works"
+                    class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl transition-all backdrop-blur-md border border-white/10 w-full sm:w-auto text-center">
                     Explore Features
                 </a>
             </div>
         </div>
     </div>
-...
+    ...
 
     <!-- Stats Section -->
     <div class="bg-white border-y border-slate-200">
@@ -59,49 +68,68 @@
     <div id="how-it-works" class="max-w-7xl mx-auto px-8 py-24">
         <div class="text-center max-w-3xl mx-auto mb-16">
             <h2 class="text-4xl font-bold text-slate-900 mb-4">Tailored for Every Stakeholder</h2>
-            <p class="text-lg text-slate-600">Our 3-layer architecture ensures everyone from top-level admins to dedicated teachers has the tools they need.</p>
+            <p class="text-lg text-slate-600">Our 3-layer architecture ensures everyone from top-level admins to
+                dedicated teachers has the tools they need.</p>
         </div>
 
         <div class="grid md:grid-cols-3 gap-8">
             <!-- Admin Role -->
-            <div class="group bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all">
-                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 text-2xl mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+            <div
+                class="group bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all">
+                <div
+                    class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 text-2xl mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                     <i class="fa-solid fa-user-shield"></i>
                 </div>
                 <h3 class="text-xl font-bold text-slate-900 mb-3">Administrator</h3>
-                <p class="text-slate-600 mb-6">Full control over users, modules, and platform resources. Monitor district-wide progress with high-level analytics.</p>
+                <p class="text-slate-600 mb-6">Full control over users, modules, and platform resources. Monitor
+                    district-wide progress with high-level analytics.</p>
                 <ul class="space-y-3 text-sm text-slate-500">
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> User Management</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Content Publishing</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Global Analytics</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> User Management
+                    </li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Content
+                        Publishing</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Global
+                        Analytics</li>
                 </ul>
             </div>
 
             <!-- Employee Role -->
-            <div class="group bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all">
-                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 text-2xl mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+            <div
+                class="group bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all">
+                <div
+                    class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 text-2xl mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                     <i class="fa-solid fa-chart-line"></i>
                 </div>
                 <h3 class="text-xl font-bold text-slate-900 mb-3">Monitoring Team</h3>
-                <p class="text-slate-600 mb-6">Focused on tracking teacher performance. View detailed progress reports and manage participant engagements.</p>
+                <p class="text-slate-600 mb-6">Focused on tracking teacher performance. View detailed progress reports
+                    and manage participant engagements.</p>
                 <ul class="space-y-3 text-sm text-slate-500">
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> District Tracking</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Progress Reports</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Resource Library</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> District
+                        Tracking</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Progress
+                        Reports</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Resource
+                        Library</li>
                 </ul>
             </div>
 
             <!-- Participant Role -->
-            <div class="group bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all">
-                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 text-2xl mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+            <div
+                class="group bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all">
+                <div
+                    class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 text-2xl mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <h3 class="text-xl font-bold text-slate-900 mb-3">Teacher / Learner</h3>
-                <p class="text-slate-600 mb-6">The heart of the initiative. Access world-class AI training, take assessments, and earn completion certificates.</p>
+                <p class="text-slate-600 mb-6">The heart of the initiative. Access world-class AI training, take
+                    assessments, and earn completion certificates.</p>
                 <ul class="space-y-3 text-sm text-slate-500">
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Microsoft AI Modules</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Knowledge Checks</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Digital Trophies</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Microsoft AI
+                        Modules</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Knowledge
+                        Checks</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Digital
+                        Trophies</li>
                 </ul>
             </div>
         </div>
@@ -118,12 +146,15 @@
         </div>
         <div class="relative z-10 max-w-4xl mx-auto text-center">
             <h2 class="text-4xl font-bold text-white mb-6 tracking-tight">Ready to start your AI Journey?</h2>
-            <p class="text-indigo-200 text-lg mb-10 max-w-xl mx-auto">Join thousands of educators across the globe in mastering Artificial Intelligence for the future of education.</p>
+            <p class="text-indigo-200 text-lg mb-10 max-w-xl mx-auto">Join thousands of educators across the globe in
+                mastering Artificial Intelligence for the future of education.</p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="{{ url_for('auth.register') }}" class="px-10 py-4 bg-white text-indigo-900 font-bold rounded-2xl hover:bg-indigo-50 transition-all shadow-xl shadow-black/20 w-full sm:w-auto">
+                <a href="{{ url_for('auth.register') }}"
+                    class="px-10 py-4 bg-white text-indigo-900 font-bold rounded-2xl hover:bg-indigo-50 transition-all shadow-xl shadow-black/20 w-full sm:w-auto">
                     Register a New Account
                 </a>
-                <a href="{{ url_for('auth.login') }}" class="px-10 py-4 border-2 border-white/20 text-white font-bold rounded-2xl hover:bg-white/10 transition-all w-full sm:w-auto">
+                <a href="{{ url_for('auth.login') }}"
+                    class="px-10 py-4 border-2 border-white/20 text-white font-bold rounded-2xl hover:bg-white/10 transition-all w-full sm:w-auto">
                     Existing User? Log In
                 </a>
             </div>

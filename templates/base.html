@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AI Teacher Platform{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
+
 <body class="bg-slate-50 antialiased overflow-x-hidden">
     {% block full_layout %}
-        {% if session.get('user_id') %}
-            <!-- Dashboard Layout with Responsive Sidebar -->
-            <div class="flex min-h-screen relative" 
-                 x-data="{ 
+    {% if session.get('user_id') %}
+    <!-- Dashboard Layout with Responsive Sidebar -->
+    <div class="flex min-h-screen relative" x-data="{ 
                     sidebarOpen: window.innerWidth >= 1024, 
                     mobileMenuOpen: false,
                     isMobile: window.innerWidth < 1024,
@@ -27,208 +29,332 @@
                         });
                     }
                  }">
-                <!-- Sidebar (Desktop & Mobile Slide-over) -->
-                <aside 
-                    :class="{ 
+        <!-- Sidebar (Desktop & Mobile Slide-over) -->
+        <aside :class="{ 
                         'translate-x-0': mobileMenuOpen || (sidebarOpen && !isMobile), 
                         '-translate-x-full': !mobileMenuOpen && isMobile,
                         'w-64': sidebarOpen || isMobile,
                         'w-20': !sidebarOpen && !isMobile
                     }"
-                    class="bg-white border-r border-slate-200 transition-all duration-300 flex flex-col fixed h-full z-50 lg:z-30 shadow-xl lg:shadow-none">
-                    
-                    <div class="p-6 flex items-center justify-between">
-                        <div x-show="sidebarOpen || isMobile" class="font-bold text-xl tracking-tight text-slate-800">
-                            AI <span class="text-indigo-600">Upskill</span>
-                        </div>
-                        <!-- Desktop Toggle -->
-                        <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:block p-2 rounded-lg hover:bg-slate-100 text-slate-500">
-                            <i class="fa-solid" :class="sidebarOpen ? 'fa-indent' : 'fa-outdent'"></i>
-                        </button>
-                        <!-- Mobile Close -->
-                        <button @click="mobileMenuOpen = false" class="lg:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-500">
-                            <i class="fa-solid fa-xmark text-xl"></i>
-                        </button>
-                    </div>
+            class="bg-white border-r border-slate-200 transition-all duration-300 flex flex-col fixed h-full z-50 lg:z-30 shadow-xl lg:shadow-none">
 
-                    <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto custom-scrollbar">
-                        {% if session.get('role') == 'Admin' %}
-                            <a href="{{ url_for('admin.dashboard') }}" class="sidebar-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
-                                <i class="fa-solid fa-chart-pie w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Dashboard</span>
-                            </a>
-                            <a href="{{ url_for('admin.users') }}" class="sidebar-link {% if request.endpoint == 'admin.users' %}active{% endif %}">
-                                <i class="fa-solid fa-users w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Users</span>
-                            </a>
-                            <a href="{{ url_for('admin.modules') }}" class="sidebar-link {% if request.endpoint == 'admin.modules' %}active{% endif %}">
-                                <i class="fa-solid fa-book w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Modules</span>
-                            </a>
-                            <a href="{{ url_for('admin.resources') }}" class="sidebar-link {% if request.endpoint == 'admin.resources' %}active{% endif %}">
-                                <i class="fa-solid fa-folder-tree w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Resources</span>
-                            </a>
-                            <a href="{{ url_for('admin.messages') }}" class="sidebar-link {% if request.endpoint == 'admin.messages' %}active{% endif %}">
-                                <i class="fa-solid fa-comments w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Messages</span>
-                            </a>
-                            <a href="{{ url_for('participant.hall_of_fame') }}" class="sidebar-link {% if request.endpoint == 'participant.hall_of_fame' %}active{% endif %}">
-                                <i class="fa-solid fa-trophy w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Leaderboard</span>
-                            </a>
-                            <a href="{{ url_for('admin.announcements') }}" class="sidebar-link {% if request.endpoint == 'admin.announcements' %}active{% endif %}">
-                                <i class="fa-solid fa-bullhorn w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">News</span>
-                            </a>
-                        {% elif session.get('role') == 'Employee' %}
-                            <a href="{{ url_for('employee.dashboard') }}" class="sidebar-link {% if request.endpoint == 'employee.dashboard' %}active{% endif %}">
-                                <i class="fa-solid fa-chart-line w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Monitoring</span>
-                            </a>
-                            <a href="{{ url_for('employee.all_users') }}" class="sidebar-link {% if request.endpoint == 'employee.all_users' %}active{% endif %}">
-                                <i class="fa-solid fa-users w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">All Users</span>
-                            </a>
-                            <a href="{{ url_for('employee.messages') }}" class="sidebar-link {% if request.endpoint == 'employee.messages' %}active{% endif %}">
-                                <i class="fa-solid fa-comments w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Messages</span>
-                            </a>
-                        {% else %}
-                            <a href="{{ url_for('participant.dashboard') }}" class="sidebar-link {% if request.endpoint == 'participant.dashboard' %}active{% endif %}">
-                                <i class="fa-solid fa-house w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Dashboard</span>
-                            </a>
-                            <a href="{{ url_for('participant.roadmap') }}" class="sidebar-link {% if request.endpoint == 'participant.roadmap' %}active{% endif %}">
-                                <i class="fa-solid fa-map w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Roadmap</span>
-                            </a>
-                            <a href="{{ url_for('participant.resources') }}" class="sidebar-link {% if request.endpoint == 'participant.resources' %}active{% endif %}">
-                                <i class="fa-solid fa-book-open-reader w-6"></i>
-                                <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Resources</span>
-                            </a>
-                        {% endif %}
-                    </nav>
+            <div class="p-6 flex items-center justify-between">
+                <div x-show="sidebarOpen || isMobile" class="font-bold text-xl tracking-tight text-slate-800">
+                    AI <span class="text-indigo-600">Upskill</span>
+                </div>
+                <!-- Desktop Toggle -->
+                <button @click="sidebarOpen = !sidebarOpen"
+                    class="hidden lg:block p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                    <i class="fa-solid" :class="sidebarOpen ? 'fa-indent' : 'fa-outdent'"></i>
+                </button>
+                <!-- Mobile Close -->
+                <button @click="mobileMenuOpen = false"
+                    class="lg:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
 
-                    <div class="p-4 border-t border-slate-100">
-                        <a href="{{ url_for('auth.logout') }}" class="sidebar-link text-red-500 hover:bg-red-50 hover:text-red-600">
-                            <i class="fa-solid fa-arrow-right-from-bracket w-6"></i>
-                            <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Logout</span>
-                        </a>
-                    </div>
-                </aside>
+            <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto custom-scrollbar">
+                {% if session.get('role') == 'Admin' %}
+                <a href="{{ url_for('admin.dashboard') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-pie w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin.events') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.events' or request.endpoint == 'admin.calendar' %}active{% endif %}">
+                    <i class="fa-solid fa-calendar-days w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Calendar</span>
+                </a>
+                <a href="{{ url_for('admin.users') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.users' %}active{% endif %}">
+                    <i class="fa-solid fa-users w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Users</span>
+                </a>
+                <a href="{{ url_for('admin.modules') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.modules' %}active{% endif %}">
+                    <i class="fa-solid fa-book w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Modules</span>
+                </a>
+                <a href="{{ url_for('admin.resources') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.resources' %}active{% endif %}">
+                    <i class="fa-solid fa-folder-tree w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Resources</span>
+                </a>
+                <a href="{{ url_for('admin.messages') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.messages' %}active{% endif %}">
+                    <i class="fa-solid fa-comments w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Messages</span>
+                </a>
+                <a href="{{ url_for('participant.hall_of_fame') }}"
+                    class="sidebar-link {% if request.endpoint == 'participant.hall_of_fame' %}active{% endif %}">
+                    <i class="fa-solid fa-trophy w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Leaderboard</span>
+                </a>
+                <a href="{{ url_for('admin.announcements') }}"
+                    class="sidebar-link {% if request.endpoint == 'admin.announcements' %}active{% endif %}">
+                    <i class="fa-solid fa-bullhorn w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">News</span>
+                </a>
+                {% elif session.get('role') == 'Employee' %}
+                <a href="{{ url_for('employee.dashboard') }}"
+                    class="sidebar-link {% if request.endpoint == 'employee.dashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-line w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Monitoring</span>
+                </a>
+                <a href="{{ url_for('employee.all_users') }}"
+                    class="sidebar-link {% if request.endpoint == 'employee.all_users' %}active{% endif %}">
+                    <i class="fa-solid fa-users w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">All Users</span>
+                </a>
+                <a href="{{ url_for('employee.messages') }}"
+                    class="sidebar-link {% if request.endpoint == 'employee.messages' %}active{% endif %}">
+                    <i class="fa-solid fa-comments w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Messages</span>
+                </a>
+                <a href="{{ url_for('employee.calendar') }}"
+                    class="sidebar-link {% if request.endpoint == 'employee.calendar' %}active{% endif %}">
+                    <i class="fa-solid fa-calendar-days w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Calendar</span>
+                </a>
+                {% else %}
+                <a href="{{ url_for('participant.dashboard') }}"
+                    class="sidebar-link {% if request.endpoint == 'participant.dashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-house w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Dashboard</span>
+                </a>
+                <a href="{{ url_for('participant.roadmap') }}"
+                    class="sidebar-link {% if request.endpoint == 'participant.roadmap' %}active{% endif %}">
+                    <i class="fa-solid fa-map w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Roadmap</span>
+                </a>
+                <a href="{{ url_for('participant.showroom') }}"
+                    class="sidebar-link {% if request.endpoint == 'participant.showroom' %}active{% endif %}">
+                    <i class="fa-solid fa-trophy w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Showroom</span>
+                </a>
+                <a href="{{ url_for('participant.hall_of_fame') }}"
+                    class="sidebar-link {% if request.endpoint == 'participant.hall_of_fame' %}active{% endif %}">
+                    <i class="fa-solid fa-award w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Hall of Fame</span>
+                </a>
+                <a href="{{ url_for('participant.calendar') }}"
+                    class="sidebar-link {% if request.endpoint == 'participant.calendar' %}active{% endif %}">
+                    <i class="fa-solid fa-calendar-days w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Calendar</span>
+                </a>
+                <a href="{{ url_for('participant.resources') }}"
+                    class="sidebar-link {% if request.endpoint == 'participant.resources' %}active{% endif %}">
+                    <i class="fa-solid fa-book-open-reader w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Resources</span>
+                </a>
+                {% endif %}
+            </nav>
 
-                <!-- Mobile Overlay -->
-                <div x-show="mobileMenuOpen" @click="mobileMenuOpen = false" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden"></div>
+            <div class="p-4 border-t border-slate-100">
+                <a href="{{ url_for('auth.logout') }}"
+                    class="sidebar-link text-red-500 hover:bg-red-50 hover:text-red-600">
+                    <i class="fa-solid fa-arrow-right-from-bracket w-6"></i>
+                    <span x-show="sidebarOpen || window.innerWidth < 1024" class="ml-3 font-medium">Logout</span>
+                </a>
+            </div>
+        </aside>
 
-                <!-- Main Content Area -->
-                <main 
-                    :class="{ 
+        <!-- Mobile Overlay -->
+        <div x-show="mobileMenuOpen" @click="mobileMenuOpen = false"
+            class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden"></div>
+
+        <!-- Main Content Area -->
+        <main :class="{ 
                         'lg:ml-64': sidebarOpen, 
                         'lg:ml-20': !sidebarOpen,
                         'ml-0': true
-                    }" 
-                    class="flex-1 transition-all duration-300 min-w-0">
-                    
-                    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-20 border-b border-slate-200 px-4 md:px-8 h-16 flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <!-- Mobile Menu Toggle -->
-                            <button @click="mobileMenuOpen = true" class="lg:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-500">
-                                <i class="fa-solid fa-bars-staggered text-xl"></i>
-                            </button>
-                            <h1 class="text-sm md:text-lg font-bold text-slate-800 truncate">{% block header_title %}{% endblock %}</h1>
-                        </div>
-                        <div class="flex items-center space-x-2 md:space-x-4">
-                            <div class="hidden sm:block text-right">
-                                <p class="text-xs font-bold text-slate-800">{{ session.get('name') }}</p>
-                                <p class="text-[10px] text-slate-500 uppercase tracking-wider">{{ session.get('role') }}</p>
-                            </div>
-                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
-                                {{ session.get('name')[0] if session.get('name') else 'U' }}
-                            </div>
-                        </div>
-                    </header>
+                    }" class="flex-1 transition-all duration-300 min-w-0">
 
-                    <div class="p-4 md:p-8">
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
-                                {% for category, message in messages %}
-                                    <div class="mb-6 p-4 rounded-xl flex items-center space-x-3 {% if category == 'success' %}bg-green-50 text-green-700 border border-green-100{% elif category == 'danger' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-blue-50 text-blue-700 border border-blue-100{% endif %}">
-                                        <i class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'danger' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}"></i>
-                                        <span class="font-medium text-sm">{{ message }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                        {% endwith %}
-
-                        {% block content %}{% endblock %}
-                    </div>
-                </main>
-            </div>
-        {% else %}
-            <!-- Auth Layout (Login/Register) -->
-            <div class="min-h-screen flex text-slate-900 bg-white">
-                <!-- Left: Branding & Visuals (Hidden on small screens) -->
-                <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-slate-950 items-center justify-center">
-                    <!-- Modern Gradient / Mesh Background Elements -->
-                    <div class="absolute inset-0 z-0 opacity-60 mix-blend-screen">
-                        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-600 rounded-full blur-[100px] animate-pulse"></div>
-                        <div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-fuchsia-600 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s;"></div>
-                        <div class="absolute top-[40%] left-[30%] w-[40%] h-[40%] bg-blue-600 rounded-full blur-[80px] animate-pulse" style="animation-delay: 4s;"></div>
-                    </div>
-                    
-                    <div class="relative z-10 p-16 max-w-lg text-white">
-                        <div class="mb-8 p-4 bg-white/10 backdrop-blur-md rounded-2xl inline-block border border-white/20">
-                            <i class="fa-solid fa-graduation-cap text-4xl text-fuchsia-300"></i>
-                        </div>
-                        <h1 class="text-5xl font-extrabold tracking-tight mb-6 leading-tight">Master AI in <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-indigo-400">Modern Education</span></h1>
-                        <p class="text-lg text-indigo-100/80 font-medium leading-relaxed">
-                            Join the leading upskilling platform for teachers. Accelerate your career, optimize your workflow, and empower your students with cutting-edge artificial intelligence methodologies.
-                        </p>
-                    </div>
-                    
-                    <!-- decorative pattern -->
-                    <svg class="absolute inset-0 h-full w-full opacity-10" width="100%" height="100%" fill="none">
-                        <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
-                            <path d="M0 40V0H40" stroke="currentColor" stroke-width="1"></path>
-                        </pattern>
-                        <rect width="100%" height="100%" fill="url(#gridPattern)"></rect>
-                    </svg>
+            <header
+                class="bg-white/80 backdrop-blur-md sticky top-0 z-20 border-b border-slate-200 px-4 md:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <!-- Mobile Menu Toggle -->
+                    <button @click="mobileMenuOpen = true"
+                        class="lg:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-500">
+                        <i class="fa-solid fa-bars-staggered text-xl"></i>
+                    </button>
+                    <h1 class="text-sm md:text-lg font-bold text-slate-800 truncate">{% block header_title %}{% endblock
+                        %}</h1>
                 </div>
-                
-                <!-- Right: Auth Form Container -->
-                <div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-16 relative">
-                    <!-- Mobile Background Blurs -->
-                    <div class="absolute inset-0 z-0 overflow-hidden lg:hidden pointer-events-none opacity-10">
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full blur-[80px]"></div>
-                        <div class="absolute bottom-0 left-0 w-64 h-64 bg-fuchsia-500 rounded-full blur-[80px]"></div>
+                <div class="flex items-center space-x-2 md:space-x-4">
+                    <div class="hidden sm:block text-right">
+                        <p class="text-xs font-bold text-slate-800">{{ session.get('name') }}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider">{{ session.get('role') }}</p>
                     </div>
-
-                    <div class="w-full max-w-md relative z-10">
-                        <div class="text-center mb-10 lg:text-left">
-                            <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight lg:hidden mb-2">AI Teacher <span class="text-indigo-600 tracking-tighter">Upskill</span></h2>
-                            <h2 class="hidden lg:block text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Welcome Back</h2>
-                            <p class="text-sm text-slate-500 font-medium">Please enter your details to continue</p>
-                        </div>
-                        
-                        <div class="mb-6">
-                            {% with messages = get_flashed_messages(with_categories=true) %}
-                                {% if messages %}
-                                    {% for category, message in messages %}
-                                        <div class="p-4 rounded-xl text-sm font-medium flex items-center gap-3 {% if category == 'success' %}bg-green-50 text-green-700 border border-green-100{% elif category == 'danger' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-indigo-50 text-indigo-700 border border-indigo-100{% endif %}">
-                                            <i class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'danger' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %} text-lg"></i>
-                                            {{ message }}
-                                        </div>
-                                    {% endfor %}
-                                {% endif %}
-                            {% endwith %}
-                        </div>
-
-                        {% block auth_content %}{% endblock %}
+                    <div
+                        class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+                        {{ session.get('name')[0] if session.get('name') else 'U' }}
                     </div>
                 </div>
+            </header>
+
+            <div class="p-4 md:p-8">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div
+                    class="mb-6 p-4 rounded-xl flex items-center space-x-3 {% if category == 'success' %}bg-green-50 text-green-700 border border-green-100{% elif category == 'danger' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-blue-50 text-blue-700 border border-blue-100{% endif %}">
+                    <i
+                        class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'danger' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}"></i>
+                    <span class="font-medium text-sm">{{ message }}</span>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
             </div>
-        {% endif %}
+        </main>
+    </div>
+    {% else %}
+    <!-- Auth Layout (Login/Register) -->
+    <div class="min-h-screen flex text-slate-900 bg-white">
+        <!-- Left: Branding & Visuals (Hidden on small screens) -->
+        <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-slate-950 items-center justify-center">
+            <!-- Modern Gradient / Mesh Background Elements -->
+            <div class="absolute inset-0 z-0 opacity-60 mix-blend-screen">
+                <div
+                    class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-600 rounded-full blur-[100px] animate-pulse">
+                </div>
+                <div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-fuchsia-600 rounded-full blur-[120px] animate-pulse"
+                    style="animation-delay: 2s;"></div>
+                <div class="absolute top-[40%] left-[30%] w-[40%] h-[40%] bg-blue-600 rounded-full blur-[80px] animate-pulse"
+                    style="animation-delay: 4s;"></div>
+            </div>
+
+            <div class="relative z-10 p-16 max-w-lg text-white">
+                <div class="mb-8 p-4 bg-white/10 backdrop-blur-md rounded-2xl inline-block border border-white/20">
+                    <i class="fa-solid fa-graduation-cap text-4xl text-fuchsia-300"></i>
+                </div>
+                <h1 class="text-5xl font-extrabold tracking-tight mb-6 leading-tight">Master AI in <br><span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-indigo-400">Modern
+                        Education</span></h1>
+                <p class="text-lg text-indigo-100/80 font-medium leading-relaxed">
+                    Join the leading upskilling platform for teachers. Accelerate your career, optimize your workflow,
+                    and empower your students with cutting-edge artificial intelligence methodologies.
+                </p>
+            </div>
+
+            <!-- decorative pattern -->
+            <svg class="absolute inset-0 h-full w-full opacity-10" width="100%" height="100%" fill="none">
+                <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M0 40V0H40" stroke="currentColor" stroke-width="1"></path>
+                </pattern>
+                <rect width="100%" height="100%" fill="url(#gridPattern)"></rect>
+            </svg>
+        </div>
+
+        <!-- Right: Auth Form Container -->
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-16 relative">
+            <!-- Mobile Background Blurs -->
+            <div class="absolute inset-0 z-0 overflow-hidden lg:hidden pointer-events-none opacity-10">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full blur-[80px]"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-fuchsia-500 rounded-full blur-[80px]"></div>
+            </div>
+
+            <div class="w-full max-w-md relative z-10">
+                <div class="text-center mb-10 lg:text-left">
+                    <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight lg:hidden mb-2">AI Teacher <span
+                            class="text-indigo-600 tracking-tighter">Upskill</span></h2>
+                    <h2 class="hidden lg:block text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Welcome Back
+                    </h2>
+                    <p class="text-sm text-slate-500 font-medium">Please enter your details to continue</p>
+                </div>
+
+                <div class="mb-6">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div
+                        class="p-4 rounded-xl text-sm font-medium flex items-center gap-3 {% if category == 'success' %}bg-green-50 text-green-700 border border-green-100{% elif category == 'danger' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-indigo-50 text-indigo-700 border border-indigo-100{% endif %}">
+                        <i
+                            class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'danger' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %} text-lg"></i>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+
+                {% block auth_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
     {% endblock %}
+    <!-- AI Vision Sidebar (Elite Feature) -->
+    <div id="vision-sidebar" class="vision-sidebar p-6 hidden lg:block">
+        <button class="close-sidebar" onclick="document.getElementById('vision-sidebar').classList.remove('active')">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="flex items-center space-x-3 mb-5">
+            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg">
+                <i class="fa-solid fa-eye text-sm"></i>
+            </div>
+            <h3 class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">AI Vision</h3>
+        </div>
+        <div class="space-y-4">
+            <div class="p-3 bg-indigo-50/80 rounded-xl border border-indigo-100/60">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-indigo-500 mb-1">💡 Quick Tip</p>
+                <p class="text-xs text-slate-600 leading-relaxed">Focus on <strong>"Prompt Engineering"</strong> in Module 2 for maximum impact on personalized learning.</p>
+            </div>
+            <div class="p-3 bg-emerald-50/80 rounded-xl border border-emerald-100/60">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-500 mb-1">📊 Trend</p>
+                <p class="text-xs text-slate-600 leading-relaxed">AI-assisted education improves student outcomes by <strong>30%</strong> on average.</p>
+            </div>
+            <div class="p-3 bg-amber-50/80 rounded-xl border border-amber-100/60">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-amber-500 mb-1">🎯 Goal</p>
+                <p class="text-xs text-slate-600 leading-relaxed">Complete all modules to earn your <strong>AI Master</strong> badge!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat Bubble & Window -->
+    <div class="fixed bottom-8 right-8 z-50">
+        <button id="ai-chat-bubble" class="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-700 text-white rounded-[1.5rem] shadow-2xl flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all duration-300 group">
+            <i class="fa-solid fa-robot group-hover:hidden"></i>
+            <i class="fa-solid fa-sparkles hidden group-hover:block animate-spin-slow"></i>
+            <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+        </button>
+
+        <div id="ai-chat-window" class="hidden absolute bottom-20 right-0 w-80 sm:w-96 h-[500px] glass-card flex flex-col border border-white/50 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden">
+            <div class="p-4 bg-indigo-600 text-white flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-white/20 backdrop-blur-md rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-robot text-xs"></i>
+                    </div>
+                    <span class="font-bold text-sm">AI Teacher Assistant</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <span class="text-[10px] font-black uppercase tracking-widest opacity-80">Online</span>
+                </div>
+            </div>
+            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/30 dark:bg-slate-950/30">
+                <div class="flex justify-start mb-4">
+                    <div class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white px-4 py-2 rounded-r-2xl rounded-tl-2xl text-sm glass-effect">
+                        Hello! I'm your AI tutor. How can I help you with your training today?
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50">
+                <div class="flex space-x-2">
+                    <input type="text" id="chat-input" placeholder="Ask anything about the modules..." class="flex-1 bg-slate-100 dark:bg-slate-800 border-transparent focus:border-indigo-500 focus:ring-0 rounded-xl text-sm px-4 py-2 transition-all text-slate-800 dark:text-white">
+                    <button id="chat-send" class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center hover:bg-indigo-700 transition-all">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
 </body>
+
 </html>

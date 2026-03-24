@@ -25,12 +25,15 @@ def create_app():
     from routes.graph_auth import graph_auth_bp
     from routes.google_auth import google_auth_bp
 
+    from routes.ai_assistant import ai_assistant_bp
+
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(employee_bp, url_prefix='/employee')
     app.register_blueprint(participant_bp, url_prefix='/participant')
     app.register_blueprint(graph_auth_bp, url_prefix='/microsoft')
     app.register_blueprint(google_auth_bp, url_prefix='/google')
+    app.register_blueprint(ai_assistant_bp, url_prefix='/ai')
 
     @app.route('/')
     def index():
@@ -47,15 +50,26 @@ def create_app():
 
     @app.route('/import-db')
     def run_import():
+        import os
         from import_db import import_db
+        
+        # Create a debug report of what variables the app actually sees
+        debug_report = "<h3>Debug Report (Environment Variables):</h3><ul>"
+        for k, v in os.environ.items():
+            if 'MYSQL' in k:
+                # Mask password but show length
+                val = v if 'PASS' not in k else f"*** (length: {len(v)})"
+                debug_report += f"<li><b>{k}</b>: {val}</li>"
+        debug_report += "</ul>"
+
         try:
             import_db()
-            return "<h1>SUCCESS!</h1><p>Database migration completed successfully. You can now <a href='/auth/login'>Login here</a>.</p>"
+            return f"<h1>SUCCESS!</h1>{debug_report}<p>Database migration completed successfully. You can now <a href='/auth/login'>Login here</a>.</p>"
         except Exception as e:
-            return f"<h1>MIGRATION FAILED</h1><p>Error: {str(e)}</p><p>Check your Environment Variables in Render!</p>"
+            return f"<h1>MIGRATION FAILED</h1><p>Error: {str(e)}</p>{debug_report}<p>Check your Environment Variables in Render!</p>"
 
     return app
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(host='0.0.0.0', debug=True, port=5001)
+    app.run(host='0.0.0.0', port=5007, debug=False)

@@ -375,10 +375,12 @@ def events():
             flash('Title and date are required.', 'danger')
         return redirect(url_for('admin.events'))
     
-    cur.execute("SELECT * FROM events ORDER BY event_date ASC")
-    all_events = cur.fetchall()
+    cur.execute("SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC, event_time ASC")
+    upcoming_events = cur.fetchall()
+    cur.execute("SELECT * FROM events WHERE event_date < CURDATE() ORDER BY event_date DESC")
+    past_events = cur.fetchall()
     cur.close()
-    return render_template('admin/events.html', events=all_events)
+    return render_template('admin/events.html', upcoming_events=upcoming_events, past_events=past_events)
 
 @admin_bp.route('/events/delete/<int:event_id>', methods=['POST'])
 @login_required

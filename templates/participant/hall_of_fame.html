@@ -17,64 +17,82 @@
     <div class="glass-card shadow-2xl border-none">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse min-w-[600px] md:min-w-0">
-            <thead>
-                <tr class="bg-slate-50/50">
-                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100">Rank</th>
-                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100">Teacher</th>
-                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 hidden md:table-cell">District</th>
-                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 text-center">Modules</th>
-                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 text-center">Avg Score</th>
-                    <th class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 text-right">Status</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-50">
-                {% for player in leaderboard %}
-                <tr class="hover:bg-slate-50/50 transition-colors group">
-                    <td class="px-8 py-6">
-                        <div class="w-10 h-10 flex items-center justify-center font-bold text-lg
+                <thead>
+                    <tr class="bg-slate-50/50">
+                        <th
+                            class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100">
+                            Rank</th>
+                        <th
+                            class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100">
+                            Teacher</th>
+                        <th
+                            class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 hidden md:table-cell">
+                            District</th>
+                        <th
+                            class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 text-center">
+                            Modules</th>
+                        <th
+                            class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 text-center">
+                            Avg Score</th>
+                        <th
+                            class="px-8 py-6 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 text-right">
+                            Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for player in leaderboard %}
+                    <tr class="hover:bg-slate-50/50 transition-colors group">
+                        <td class="px-8 py-6">
+                            <div class="w-10 h-10 flex items-center justify-center font-bold text-lg
                             {% if loop.index == 1 %}bg-amber-400 text-white rounded-xl shadow-lg shadow-amber-200
                             {% elif loop.index == 2 %}bg-slate-300 text-white rounded-xl shadow-lg shadow-slate-200
                             {% elif loop.index == 3 %}bg-orange-300 text-white rounded-xl shadow-lg shadow-orange-200
                             {% else %}text-slate-400{% endif %}">
-                            {{ loop.index }}
-                        </div>
-                    </td>
-                    <td class="px-8 py-6">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">
-                                {{ player.name[0] }}
+                                {{ loop.index }}
                             </div>
-                            <div>
-                                <div class="font-bold text-slate-800">{{ player.name }}</div>
-                                <div class="text-[10px] uppercase font-bold text-slate-400 tracking-widest md:hidden">{{ player.district_name }}</div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">
+                                    {{ (player.name[0] if player.name else '?') }}
+                                </div>
+                                <div>
+                                    <div class="font-bold text-slate-800">{{ player.name }}</div>
+                                    <div
+                                        class="text-[10px] uppercase font-bold text-slate-400 tracking-widest md:hidden">
+                                        {{ player.district_name }}</div>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td class="px-8 py-6 text-slate-600 font-medium hidden md:table-cell">
-                        {{ player.district_name }}
-                    </td>
-                    <td class="px-8 py-6 text-center">
-                        <span class="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full">
-                            {{ player.completed_count or 0 }} Completed
-                        </span>
-                    </td>
-                    <td class="px-8 py-6 text-center">
-                        <div class="text-slate-800 font-bold">{{ player.avg_score|round(1) if player.avg_score else '0.0' }}</div>
-                        <div class="text-[10px] text-slate-400 uppercase font-bold">Points</div>
-                    </td>
-                    <td class="px-8 py-6 text-right">
-                        {% if player.has_trophy %}
-                        <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded-full border border-amber-200">
-                            <i class="fa-solid fa-award"></i>
-                            certified
-                        </div>
-                        {% else %}
-                        <div class="text-[10px] text-slate-300 font-bold uppercase tracking-wider italic">In Progress</div>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
+                        </td>
+                        <td class="px-8 py-6 text-slate-600 font-medium hidden md:table-cell">
+                            {{ player.district_name }}
+                        </td>
+                        <td class="px-8 py-6 text-center">
+                            <div class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Impact Points</div>
+                            <div class="text-2xl font-black text-indigo-600 leading-none">{{ player.points or 0 }}</div>
+                        </td>
+                        <td class="px-8 py-6 text-center">
+                            <span class="text-sm font-bold text-slate-700">{{ player.avg_score or '—' }}{% if player.avg_score %}%{% endif %}</span>
+                        </td>
+                        <td class="px-8 py-6 text-right">
+                            {% if player.completed_count and total_modules and player.completed_count >= total_modules %}
+                            <span class="px-3 py-1.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase rounded-lg inline-flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check text-emerald-500"></i> Certified
+                            </span>
+                            {% elif player.completed_count and player.completed_count > 0 %}
+                            <span class="px-3 py-1.5 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded-lg inline-flex items-center gap-1.5">
+                                <i class="fa-solid fa-spinner text-amber-500"></i> In Progress
+                            </span>
+                            {% else %}
+                            <span class="px-3 py-1.5 bg-slate-100 text-slate-500 text-[10px] font-bold uppercase rounded-lg inline-flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-minus text-slate-400"></i> Not Started
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
     </div>

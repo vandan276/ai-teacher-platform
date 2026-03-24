@@ -67,13 +67,16 @@ body {
 ::-webkit-scrollbar {
     width: 6px;
 }
+
 ::-webkit-scrollbar-track {
     background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
     background: #cbd5e1;
     border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
@@ -91,4 +94,166 @@ body {
 .btn-premium:hover {
     box-shadow: 0 6px 20px rgba(79, 70, 229, 0.23);
     transform: translateY(-1px);
+}
+
+/* Elite UI: Module Orbit Navigation */
+.orbit-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 4rem auto;
+    perspective: 1000px;
+}
+
+.orbit-item {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    left: 50%;
+    top: 50%;
+    margin-left: -50px;
+    margin-top: -50px;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+.orbit-center {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    left: 50%;
+    top: 50%;
+    margin-left: -70px;
+    margin-top: -70px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 20px 40px rgba(79, 70, 229, 0.3);
+    z-index: 10;
+    font-weight: 800;
+}
+
+/* 3D Tilt Utility */
+.tilt-card {
+    transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    transform-style: preserve-3d;
+}
+
+.tilt-card:hover {
+    transform: rotateX(5deg) rotateY(5deg);
+}
+
+/* AI Vision Sidebar */
+.vision-sidebar {
+    position: fixed;
+    right: -400px;
+    top: 15%;
+    width: 320px;
+    max-height: 70vh;
+    z-index: 45;
+    transition: all 0.5s cubic-bezier(0.87, 0, 0.13, 1);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1.5rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(99, 102, 241, 0.08);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.vision-sidebar.active {
+    right: 24px;
+}
+
+.vision-sidebar .close-sidebar {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    background: rgba(0, 0, 0, 0.06);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.vision-sidebar .close-sidebar:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* Skeleton Pulse */
+@keyframes skeleton-pulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.skeleton {
+    background: #e2e8f0;
+    animation: skeleton-pulse 1.5s infinite ease-in-out;
+    border-radius: 0.5rem;
+}
+
+/* Confetti Burst */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--primary);
+    opacity: 0;
+    pointer-events: none;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Elite Chat Enhancements */
+#ai-chat-bubble {
+    z-index: 9999;
+}
+
+#ai-chat-window {
+    z-index: 9998;
+}
+
+.bubble-animate {
+    animation: bubble-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bubble-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }

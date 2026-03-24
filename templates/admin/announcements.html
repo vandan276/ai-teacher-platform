@@ -9,39 +9,49 @@
             <h2 class="text-xl font-bold text-slate-800">Manage Announcements</h2>
             <p class="text-sm text-slate-500">Broadcast important updates to all platform users.</p>
         </div>
-            <button onclick="document.getElementById('newAnnouncementModal').classList.remove('hidden')" 
-                class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-xs sm:text-sm font-bold rounded-xl hover:bg-indigo-700 transition shadow-sm whitespace-nowrap">
-                <i class="fa-solid fa-bullhorn mr-2"></i> <span class="hidden sm:inline">New Announcement</span><span class="sm:hidden">New</span>
-            </button>
+        <button onclick="document.getElementById('newAnnouncementModal').classList.remove('hidden')"
+            class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-xs sm:text-sm font-bold rounded-xl hover:bg-indigo-700 transition shadow-sm whitespace-nowrap">
+            <i class="fa-solid fa-bullhorn mr-2"></i> <span class="hidden sm:inline">New Announcement</span><span
+                class="sm:hidden">New</span>
+        </button>
     </div>
 
     <!-- New Announcement Modal -->
-    <div id="newAnnouncementModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div id="newAnnouncementModal"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
         <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden">
             <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center">
                 <h3 class="text-lg font-bold text-slate-900">New Announcement</h3>
-                <button onclick="document.getElementById('newAnnouncementModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="document.getElementById('newAnnouncementModal').classList.add('hidden')"
+                    class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form action="{{ url_for('admin.announcements') }}" method="POST" class="p-8 space-y-5">
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Title</label>
-                    <input type="text" name="title" required placeholder="Announcement title..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
+                    <input type="text" name="title" required placeholder="Announcement title..."
+                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Message</label>
-                    <textarea name="message" required rows="4" placeholder="Write your announcement..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium resize-none"></textarea>
+                    <textarea name="message" required rows="4" placeholder="Write your announcement..."
+                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium resize-none"></textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Priority</label>
-                    <select name="priority" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium text-slate-600">
+                    <label
+                        class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Priority</label>
+                    <select name="priority"
+                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium text-slate-600">
                         <option value="normal">Normal</option>
                         <option value="important">Important</option>
                         <option value="urgent">Urgent</option>
                     </select>
                 </div>
                 <div class="pt-4 flex space-x-3">
-                    <button type="button" onclick="document.getElementById('newAnnouncementModal').classList.add('hidden')" class="flex-1 px-4 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition">Cancel</button>
-                    <button type="submit" class="flex-1 px-4 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition">Publish</button>
+                    <button type="button"
+                        onclick="document.getElementById('newAnnouncementModal').classList.add('hidden')"
+                        class="flex-1 px-4 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition">Cancel</button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition">Publish</button>
                 </div>
             </form>
         </div>
@@ -50,22 +60,28 @@
     <!-- Announcements List -->
     <div class="space-y-4">
         {% for a in announcements %}
-        <div class="bg-white rounded-2xl border shadow-sm overflow-hidden
+        <div
+            class="bg-white rounded-2xl border shadow-sm overflow-hidden
             {% if a.priority == 'urgent' %}border-red-200{% elif a.priority == 'important' %}border-amber-200{% else %}border-slate-100{% endif %}">
             <div class="p-6">
                 <div class="flex items-start justify-between">
                     <div class="flex items-center gap-3 mb-3">
                         {% if a.priority == 'urgent' %}
-                        <span class="px-2.5 py-1 bg-red-50 text-red-600 text-xs font-bold rounded-full uppercase">Urgent</span>
+                        <span
+                            class="px-2.5 py-1 bg-red-50 text-red-600 text-xs font-bold rounded-full uppercase">Urgent</span>
                         {% elif a.priority == 'important' %}
-                        <span class="px-2.5 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded-full uppercase">Important</span>
+                        <span
+                            class="px-2.5 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded-full uppercase">Important</span>
                         {% else %}
-                        <span class="px-2.5 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full uppercase">Normal</span>
+                        <span
+                            class="px-2.5 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full uppercase">Normal</span>
                         {% endif %}
-                        <span class="text-xs text-slate-400">{{ a.created_at.strftime('%b %d, %Y at %I:%M %p') if a.created_at else '' }}</span>
+                        <span class="text-xs text-slate-400">{{ a.created_at.strftime('%b %d, %Y at %I:%M %p') if
+                            a.created_at else '' }}</span>
                     </div>
                     <form action="{{ url_for('admin.delete_announcement', announcement_id=a.id) }}" method="POST">
-                        <button type="submit" class="text-slate-300 hover:text-red-500 transition"><i class="fa-solid fa-trash-can"></i></button>
+                        <button type="submit" class="text-slate-300 hover:text-red-500 transition"><i
+                                class="fa-solid fa-trash-can"></i></button>
                     </form>
                 </div>
                 <h3 class="text-lg font-bold text-slate-800 mb-2">{{ a.title }}</h3>

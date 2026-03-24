@@ -13,8 +13,36 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('Admin', 'Employee', 'Participant') NOT NULL,
     district_id INT,
     is_approved BOOLEAN DEFAULT FALSE,
+    points INT DEFAULT 0,
     FOREIGN KEY (district_id) REFERENCES districts(id) ON DELETE SET NULL
 );
+
+-- Create Badges Table
+CREATE TABLE IF NOT EXISTS badges (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT,
+    icon VARCHAR(255), -- FontAwesome icon class
+    criteria VARCHAR(255) -- 'quick_start', 'perfect_score', etc.
+);
+
+-- Create User Badges Junction Table
+CREATE TABLE IF NOT EXISTS user_badges (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    badge_id INT NOT NULL,
+    earned_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (badge_id) REFERENCES badges(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_badge (user_id, badge_id)
+);
+
+-- Insert Default Badges
+INSERT IGNORE INTO badges (name, description, icon, criteria) VALUES 
+('Quick Starter', 'Completed your first training module.', 'fa-solid fa-bolt', 'quick_start'),
+('AI Explorer', 'Completed 3 training modules.', 'fa-solid fa-rocket', 'ai_explorer'),
+('Perfect Score', 'Scored 100% on any assessment.', 'fa-solid fa-award', 'perfect_score'),
+('Master Educator', 'Completed all available training modules.', 'fa-solid fa-crown', 'master_educator');
 
 -- Create Modules Table
 CREATE TABLE IF NOT EXISTS modules (

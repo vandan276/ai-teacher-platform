@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Achievement Showroom{% endblock %}
+{% block header_title %}Trophy Room{% endblock %}
+
+{% block content %}
+<div class="space-y-12 pb-20">
+    <!-- Header Section -->
+    <div class="text-center max-w-2xl mx-auto space-y-4">
+        <h1 class="text-5xl font-black text-slate-800 tracking-tight">Your Achievements</h1>
+        <p class="text-slate-500 font-medium">Every badge represents a milestone in your journey to mastering AI for education. Keep going, Teacher!</p>
+    </div>
+
+
+
+    <!-- Trophy Shelf (3D Effect) -->
+    <div class="relative perspective-lg py-20 bg-slate-50/50 dark:bg-slate-900/50 rounded-[3rem] border border-slate-100 dark:border-slate-800">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-10">
+            {% for badge in badges %}
+            <div class="tilt-card group relative">
+                <!-- Achievement Card -->
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-2xl border border-slate-100 dark:border-slate-700 transition-all duration-500 hover:scale-105 hover:-rotate-3">
+                    <div class="w-20 h-20 mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center text-white mb-6 shadow-xl shadow-indigo-200 dark:shadow-none">
+                        <i class="{{ badge.icon }} text-3xl"></i>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-lg font-black text-slate-800 dark:text-white mb-2 tracking-tight">{{ badge.name }}</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ badge.earned_at.strftime('%b %d, %Y') }}</p>
+                    </div>
+                    
+                    <!-- Glow effect on hover -->
+                    <div class="absolute inset-0 bg-indigo-500/10 blur-[50px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity -z-10"></div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-full py-20 text-center space-y-6">
+                <div class="w-24 h-24 mx-auto bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-300">
+                    <i class="fa-solid fa-medal text-4xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-slate-600 dark:text-slate-400">Empty Showcase</h3>
+                    <p class="text-sm text-slate-400">Complete modules and assessments to earn your first badges!</p>
+                </div>
+                <a href="{{ url_for('participant.dashboard') }}" class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all">
+                    Start Learning
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Shelf Shadows -->
+        <div class="absolute bottom-0 left-10 right-10 h-6 bg-slate-200/50 dark:bg-slate-800/50 blur-xl rounded-full -z-10"></div>
+    </div>
+
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="premium-card bg-indigo-600 text-white p-10">
+            <p class="text-white/70 text-[10px] font-black uppercase tracking-widest mb-2">Total Points</p>
+            <p class="text-5xl font-black">{{ points }}</p>
+        </div>
+        <div class="premium-card bg-white dark:bg-slate-800 p-10">
+            <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Badges Unlocked</p>
+            <p class="text-5xl font-black text-slate-800 dark:text-white">{{ badges|length }}</p>
+        </div>
+        <div class="premium-card bg-white dark:bg-slate-800 p-10">
+            <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Platform Rank</p>
+            <p class="text-5xl font-black text-slate-800 dark:text-white">#{{ rank or '?' }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

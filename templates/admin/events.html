@@ -1,40 +1,114 @@
 {% extends "base.html" %}
-{% block title %}Events & Calendar{% endblock %}
+{% block title %}Manage Events{% endblock %}
 {% block header_title %}Events & Calendar{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-    <div class="flex justify-between items-center">
+<div x-data="calendarApp()" x-init="initCalendar()" class="space-y-6">
+    <!-- Header & Controls -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/50 backdrop-blur-md p-6 rounded-[2rem] border border-white/40 shadow-sm">
         <div>
-            <h2 class="text-xl font-bold text-slate-800">Manage Events</h2>
-            <p class="text-sm text-slate-500">Create meetings, trainings, and events visible to all users.</p>
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Management Suite</h2>
+            <p class="text-slate-500 text-sm font-medium">Create and coordinate platform events.</p>
         </div>
-        <button onclick="document.getElementById('newEventModal').classList.remove('hidden')" 
-            class="inline-flex items-center px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition shadow-sm">
-            <i class="fa-solid fa-calendar-plus mr-2"></i> New Event
-        </button>
+        <div class="flex items-center gap-3">
+            <button onclick="document.getElementById('newEventModal').classList.remove('hidden')" 
+                class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white text-sm font-black rounded-2xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-600/20">
+                <i class="fa-solid fa-calendar-plus mr-2"></i> NEW EVENT
+            </button>
+            <div class="flex bg-slate-100/50 p-1 rounded-xl border border-slate-200/50">
+                <button @click="view = 'grid'" :class="view === 'grid' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'" class="px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-grid"></i> Grid
+                </button>
+                <button @click="view = 'list'" :class="view === 'list' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'" class="px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-list"></i> List
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar Grid View -->
+    <div x-show="view === 'grid'" x-transition:enter="transition ease-out duration-300" class="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl overflow-hidden">
+        <div class="p-8 border-b border-slate-50 flex items-center justify-between">
+            <h3 class="text-xl font-black text-slate-800" x-text="monthNames[currentMonth] + ' ' + currentYear"></h3>
+            <div class="flex items-center gap-2">
+                <button @click="prevMonth()" class="w-10 h-10 flex items-center justify-center hover:bg-slate-50 rounded-xl text-slate-400 transition"><i class="fa-solid fa-chevron-left"></i></button>
+                <button @click="goToday()" class="px-4 py-2 text-xs font-black text-indigo-600 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition">TODAY</button>
+                <button @click="nextMonth()" class="w-10 h-10 flex items-center justify-center hover:bg-slate-50 rounded-xl text-slate-400 transition"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+        <div class="grid grid-cols-7 bg-slate-50/30 border-b border-slate-50">
+            <template x-for="day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">
+                <div class="py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest" x-text="day"></div>
+            </template>
+        </div>
+        <div class="grid grid-cols-7 divide-x divide-y divide-slate-50 border-l border-t border-slate-50">
+            <template x-for="blank in blankDays">
+                <div class="aspect-square bg-slate-50/10"></div>
+            </template>
+            <template x-for="day in daysInMonth">
+                <div @click="selectDay(day)" :class="{'bg-indigo-50/20': isToday(day), 'cursor-pointer hover:bg-slate-50/50': hasEvents(day)}" class="aspect-square p-3 group transition-all relative">
+                    <span :class="{'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 font-black': isToday(day), 'text-slate-800 font-bold': !isToday(day)}" class="inline-flex items-center justify-center w-8 h-8 rounded-xl text-xs" x-text="day"></span>
+                    <div class="mt-2 flex flex-wrap gap-1">
+                        <template x-for="event in getEventsForDay(day)">
+                            <div :class="getEventColorClass(event.event_type)" class="w-2 h-2 rounded-full ring-2 ring-white"></div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Management List View -->
+    <div x-show="view === 'list'" x-transition:enter="transition ease-out duration-300" class="space-y-4">
+        {% for event in upcoming_events + past_events %}
+        <div class="group bg-white rounded-[2rem] border border-slate-100 p-6 flex items-center gap-6 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500">
+            <div class="w-16 h-16 rounded-2xl flex flex-col items-center justify-center shrink-0 text-white shadow-xl
+                {% if event.event_type == 'meeting' %}bg-gradient-to-br from-blue-500 to-blue-700{% elif event.event_type == 'training' %}bg-gradient-to-br from-violet-500 to-violet-700{% elif event.event_type == 'deadline' %}bg-gradient-to-br from-red-500 to-red-700{% else %}bg-gradient-to-br from-emerald-500 to-emerald-700{% endif %}">
+                <span class="text-[10px] font-black uppercase tracking-widest opacity-80">{{ event.event_date.strftime('%b') if event.event_date else '' }}</span>
+                <span class="text-2xl font-black leading-none">{{ event.event_date.strftime('%d') if event.event_date else '' }}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="px-2.5 py-1 text-[10px] font-black rounded-full uppercase tracking-widest shadow-sm
+                        {% if event.event_type == 'meeting' %}bg-blue-50 text-blue-600{% elif event.event_type == 'training' %}bg-violet-50 text-violet-600{% elif event.event_type == 'deadline' %}bg-red-50 text-red-600{% else %}bg-emerald-50 text-emerald-600{% endif %}">
+                        {{ event.event_type }}
+                    </span>
+                    <span class="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-full"><i class="fa-regular fa-calendar mr-1"></i>{{ event.event_date.strftime('%A') }}</span>
+                </div>
+                <h4 class="text-lg font-bold text-slate-800">{{ event.title }}</h4>
+                <p class="text-sm text-slate-500 mt-1 truncate">{{ event.description or 'No description provided.' }}</p>
+            </div>
+            <div class="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <form action="{{ url_for('admin.delete_event', event_id=event.id) }}" method="POST" onsubmit="return confirm('Delete this event?');">
+                    <button type="submit" class="w-12 h-12 rounded-2xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center justify-center">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 
     <!-- New Event Modal -->
-    <div id="newEventModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden">
-            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-slate-900">Create New Event</h3>
-                <button onclick="document.getElementById('newEventModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+    <div id="newEventModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xl z-[100] flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl max-w-xl w-full relative overflow-hidden ring-1 ring-white/20">
+            <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-xl font-black text-slate-900 tracking-tight">Schedule New Event</h3>
+                <button onclick="document.getElementById('newEventModal').classList.add('hidden')" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form action="{{ url_for('admin.events') }}" method="POST" class="p-8 space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Event Title</label>
-                    <input type="text" name="title" required placeholder="e.g. AI Workshop Session 1" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Description</label>
-                    <textarea name="description" rows="3" placeholder="Event details..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium resize-none"></textarea>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
+            <form action="{{ url_for('admin.events') }}" method="POST" class="p-8 space-y-5">
+                <div class="grid grid-cols-2 gap-5">
+                    <div class="col-span-2">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Event Title</label>
+                        <input type="text" name="title" required placeholder="Session Name" class="w-full px-5 py-4 bg-slate-100/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition font-bold text-slate-700">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Description</label>
+                        <textarea name="description" rows="2" placeholder="Tell them what's coming..." class="w-full px-5 py-4 bg-slate-100/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition font-bold text-slate-700 resize-none"></textarea>
+                    </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Type</label>
-                        <select name="event_type" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium text-slate-600">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Type</label>
+                        <select name="event_type" class="w-full px-5 py-4 bg-slate-100/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition font-bold text-slate-600">
                             <option value="meeting">Meeting</option>
                             <option value="training">Training</option>
                             <option value="event">Event</option>
@@ -42,73 +116,68 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Location</label>
-                        <input type="text" name="location" placeholder="Online / Room 101" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Event Link (Optional)</label>
-                    <input type="url" name="link" placeholder="https://zoom.us/j/123..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Date</label>
-                        <input type="date" name="event_date" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Location</label>
+                        <input type="text" name="location" placeholder="Online / Venue" class="w-full px-5 py-4 bg-slate-100/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition font-bold text-slate-700">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Time (Optional)</label>
-                        <input type="time" name="event_time" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Date</label>
+                        <input type="date" name="event_date" required class="w-full px-5 py-4 bg-slate-100/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition font-bold text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Time</label>
+                        <input type="time" name="event_time" class="w-full px-5 py-4 bg-slate-100/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition font-bold text-slate-700">
                     </div>
                 </div>
-                <div class="pt-4 flex space-x-3">
-                    <button type="button" onclick="document.getElementById('newEventModal').classList.add('hidden')" class="flex-1 px-4 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition">Cancel</button>
-                    <button type="submit" class="flex-1 px-4 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition">Create Event</button>
+                <div class="pt-4 flex gap-4">
+                    <button type="submit" class="flex-1 py-5 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 shadow-xl shadow-indigo-600/20 transition-all active:scale-95">PUBLISH EVENT</button>
                 </div>
             </form>
         </div>
-    </div>
-
-    <!-- Events List -->
-    <div class="space-y-4">
-        {% for event in events %}
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex items-start gap-6">
-            <div class="w-16 h-16 rounded-2xl flex flex-col items-center justify-center shrink-0 text-white
-                {% if event.event_type == 'meeting' %}bg-blue-600{% elif event.event_type == 'training' %}bg-violet-600{% elif event.event_type == 'deadline' %}bg-red-600{% else %}bg-emerald-600{% endif %}">
-                <span class="text-xs font-bold uppercase">{{ event.event_date.strftime('%b') if event.event_date else '' }}</span>
-                <span class="text-xl font-extrabold leading-none">{{ event.event_date.strftime('%d') if event.event_date else '' }}</span>
-            </div>
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase
-                        {% if event.event_type == 'meeting' %}bg-blue-50 text-blue-600{% elif event.event_type == 'training' %}bg-violet-50 text-violet-600{% elif event.event_type == 'deadline' %}bg-red-50 text-red-600{% else %}bg-emerald-50 text-emerald-600{% endif %}">
-                        {{ event.event_type }}
-                    </span>
-                    {% if event.event_time %}
-                    <span class="text-xs text-slate-400"><i class="fa-regular fa-clock mr-1"></i>{{ event.event_time.strftime('%I:%M %p') if event.event_time and event.event_time.strftime else event.event_time }}</span>
-                    {% endif %}
-                </div>
-                <h3 class="text-lg font-bold text-slate-800">{{ event.title }}</h3>
-                {% if event.description %}
-                <p class="text-sm text-slate-500 mt-1">{{ event.description }}</p>
-                {% endif %}
-                {% if event.location %}
-                <p class="text-xs text-slate-400 mt-2"><i class="fa-solid fa-location-dot mr-1"></i>{{ event.location }}</p>
-                {% endif %}
-                {% if event.link %}
-                <a href="{{ event.link }}" target="_blank" class="text-xs text-indigo-500 hover:text-indigo-600 mt-2 inline-block"><i class="fa-solid fa-link mr-1"></i>{{ event.link }}</a>
-                {% endif %}
-            </div>
-            <form action="{{ url_for('admin.delete_event', event_id=event.id) }}" method="POST">
-                <button type="submit" class="text-slate-300 hover:text-red-500 transition"><i class="fa-solid fa-trash-can"></i></button>
-            </form>
-        </div>
-        {% endfor %}
-        {% if not events %}
-        <div class="text-center py-16 text-slate-400">
-            <i class="fa-solid fa-calendar-xmark text-4xl mb-4 opacity-20"></i>
-            <p class="font-medium">No events scheduled. Create one to keep everyone informed.</p>
-        </div>
-        {% endif %}
     </div>
 </div>
+
+<script>
+function calendarApp() {
+    return {
+        view: 'grid',
+        currentMonth: new Date().getMonth(),
+        currentYear: new Date().getFullYear(),
+        monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        blankDays: [],
+        daysInMonth: [],
+        events: [
+            {% for event in upcoming_events + past_events %}
+            {
+                id: {{ event.id }},
+                title: {{ event.title | tojson }},
+                event_type: {{ event.event_type | tojson }},
+                event_date: {{ event.event_date.strftime('%Y-%m-%d') | tojson if event.event_date else 'null' }}
+            },
+            {% endfor %}
+        ],
+
+        initCalendar() { this.generateCalendar(); },
+        generateCalendar() {
+            const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
+            const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+            this.blankDays = Array.from({ length: firstDay }, (_, i) => i);
+            this.daysInMonth = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+        },
+        prevMonth() { if (this.currentMonth === 0) { this.currentMonth = 11; this.currentYear--; } else { this.currentMonth--; } this.generateCalendar(); },
+        nextMonth() { if (this.currentMonth === 11) { this.currentMonth = 0; this.currentYear++; } else { this.currentMonth++; } this.generateCalendar(); },
+        goToday() { const now = new Date(); this.currentMonth = now.getMonth(); this.currentYear = now.getFullYear(); this.generateCalendar(); },
+        isToday(day) { const now = new Date(); return now.getDate() === day && now.getMonth() === this.currentMonth && now.getFullYear() === this.currentYear; },
+        getEventsForDay(day) {
+            const dateStr = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            return this.events.filter(e => e.event_date === dateStr);
+        },
+        hasEvents(day) { return this.getEventsForDay(day).length > 0; },
+        selectDay(day) { if (this.hasEvents(day)) this.view = 'list'; },
+        getEventColorClass(type) {
+            const colors = { 'meeting': 'bg-blue-500', 'training': 'bg-violet-500', 'deadline': 'bg-red-500', 'event': 'bg-emerald-500' };
+            return colors[type] || 'bg-slate-500';
+        }
+    }
+}
+</script>
 {% endblock %}
